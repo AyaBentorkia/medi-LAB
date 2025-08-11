@@ -1,0 +1,101 @@
+// const { Sequelize, DataTypes } = require('sequelize');
+// module.exports=(Sequelize,DataTypes)=>{
+// const AnalysisResult=Sequelize.define('AnalysisResult',{
+//     title:{
+//         type: DataTypes.STRING,
+//         allowNull: false,
+//     },
+//     },
+//      {
+//     tableName: 'categories',
+//     timestamps: true,
+//   });
+//   return AnalysisResult;
+// }
+  
+// **********************************//
+/*
+const { Sequelize, DataTypes } = require('sequelize');
+module.exports=(Sequelize,DataTypes)=>{
+const Category=Sequelize.define('Category',{
+    title:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    },
+     {
+    tableName: 'categories',
+    timestamps: true,
+  });
+
+   Category.associate = (models) => {
+    // Une catégorie a plusieurs types d'analyse
+    Category.hasMany(models.AnalysisType, {
+      foreignKey: 'categoryId',
+      as: 'types',
+      onDelete: 'CASCADE',
+    });
+  };
+  return Category;
+}
+  
+
+*/
+
+/*
+const { Sequelize, DataTypes } = require('sequelize');
+module.exports=(Sequelize,DataTypes)=>{
+const AnalysisType=Sequelize.define('AnalysisType',{
+    title:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    description:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+     StandardValue:{
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    unite: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    price:{
+        type: DataTypes.FLOAT,
+    },
+ categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+      onDelete: 'CASCADE',
+    },
+  },
+ {
+    tableName: 'AnalysisTypes',
+    timestamps: true,
+  });
+
+   AnalysisType.associate = (models) => {
+    // Un type d'analyse appartient à une catégorie
+    AnalysisType.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
+      as: 'category',
+    });
+  };
+  AnalysisType.belongsToMany(models.AnalysisRequest, {
+  through: 'AnalysisRequestAnalysisType',
+  foreignKey: 'AnalysisTypeId',
+  otherKey: 'AnalysisRequestId',
+  as: 'analysisRequests',
+  timestamps: false,
+});
+
+  return AnalysisType;
+}
+  
+*/
