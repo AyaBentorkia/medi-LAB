@@ -1,0 +1,165 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Conteneur principal plein écran */
+.register-container {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: url(../../assets/labcover2.jpg) no-repeat center center/cover;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden; /* pas de scroll */
+}
+
+/* Boîte centrale */
+.register-wrapper {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.8s ease forwards;
+  height: 95%;
+}
+
+/* Titre */
+.register-title-wrapper h2 {
+  text-align: center;
+  color: #2E6F95;
+  margin-bottom: 1rem;
+}
+
+/* Formulaire en deux colonnes */
+.register-form-wrapper form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.register-form-wrapper .register-form-wrapper {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+/* Chaque colonne */
+.register-side-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Form-groups */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Champs input et select */
+.input-field,
+.role-select {
+  padding: 0.55rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus,
+.role-select:focus {
+  border-color: #2E6F95;
+  box-shadow: 0 0 8px rgba(46, 111, 149, 0.5);
+  transform: scale(1.02);
+}
+
+/* Radio boutons */
+.gender-group .radio-group {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.gender-group input {
+  margin-right: 5px;
+}
+
+/* Footer + bouton en bas */
+.register-footer-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: auto; /* pousse en bas */
+}
+
+/* Bouton S'inscrire */
+.register-btn-wrapper {
+  display: flex;
+  justify-content: center; /* centre horizontalement */
+  margin-bottom: 10px; /* petit espace avec le footer */
+}
+
+.register-btn-wrapper .register-btn {
+  width: 200px; /* largeur fixe plus raisonnable */
+  padding: 0.75rem;
+  border: none;
+  background-color: #2E6F95;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.register-btn-wrapper .register-btn:hover {
+  background-color: #245472;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(46,111,149,0.4);
+}
+
+/* Footer */
+.register-footer {
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.register-footer a {
+  color: #2E6F95;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.register-footer a:hover {
+  color: #245472;
+  text-decoration: underline;
+}
+
+/* Responsive : empilement sur mobile */
+@media (max-width: 768px) {
+  .register-form-wrapper .register-form-wrapper {
+    flex-direction: column;
+  }
+}
