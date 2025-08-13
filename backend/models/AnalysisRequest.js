@@ -65,6 +65,11 @@ const AnalysisRequest=Sequelize.define('AnalysisRequest',{
       as: 'samples',
       timestamps: false,
     });
+    AnalysisRequest.hasMany(models.AnalysisResult, {
+  foreignKey: 'AnalysisRequestId',
+  as: 'results'
+});
+
 
    
 }

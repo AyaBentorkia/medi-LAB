@@ -7,13 +7,12 @@ const AppError = require("../utils/AppError");
  */
 const createMultipleResults = async (req, res) => {
   try {
-    const { requestId } = req.params;
     const technicianId = req.user.id; // supposé récupéré via middleware auth
     const analysisResultData = req.body; // tableau des résultats à créer
 
     const results = await AnalysisResultService.createMultipleResults(
       analysisResultData,
-      requestId,
+      req.params.id,
       technicianId
     );
 
