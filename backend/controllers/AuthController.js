@@ -10,9 +10,10 @@ const AppError = require("../utils/AppError");
 const RegisterUser= async (req, res)=> {
     try {
         const user= await AuthService.register(req.body);
-        return res.status(201).json({ message: "User est créé", user });
+        return res.status(200).json({ message: "User est créé", user });
     } catch (error) {
         if (error instanceof AppError) {
+            console.log(error.message)
         return res.status(error.statusCode).json({ error: error.message });
         }
         console.log(error.message)

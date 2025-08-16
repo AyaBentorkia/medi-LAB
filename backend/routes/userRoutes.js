@@ -7,10 +7,7 @@ const {
     GetUserProfileById,
     logout,} = require('../controllers/UserController');
 const { RegisterUser, LoginUser } = require('../controllers/AuthController');
-const { verifyAdmin,
-    verifySecretaire,
-    verifyTechnicienLabo,
-    verifyAccountStatus,
+const { 
     VerifyToken
 }= require('../middleware/AuthMiddleware');
 const { ValidateUpdateUser } = require('../services/UserService');
