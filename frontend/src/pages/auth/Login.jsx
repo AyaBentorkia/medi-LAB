@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Login.css";
 import axios from "axios";
+import { LoginContext } from "../../context/LoginContext";
 
 // Reducers
 const emailReducer = (prevState, action) => {
@@ -13,7 +14,7 @@ const emailReducer = (prevState, action) => {
         error: action.payload.includes("@") ? null : "Entrer un email valide",
       };
     case "USER_TYPING_DONE":
-      return {
+      return { 
         value: prevState.value,
         isValid: prevState.value.includes("@"),
         error: prevState.value.includes("@") ? null : "Entrer un email valide",
@@ -63,6 +64,7 @@ const Login = () => {
     error: null,
   });
   const [formIsValid, setFormIsValid] = useState(false);
+  const { loginHandler } = useContext(LoginContext);
 
   // Validation effect
   useEffect(() => {
@@ -105,16 +107,19 @@ const Login = () => {
           validateStatus: (status) => true,
         }
       );
-      if (response.status !== 200) {
-        setBackendError(response?.data?.error || "Une erreur est survenue");
-      } else {
+      console.log("response status: ",response.status)
+      if (response.status == 200) {
+        loginHandler(response?.data?.user?.accessToken, response?.data?.user?.user?.role);
         setBackendError(null); // reset si succès
         setSuccessMessage("Connexion réussie !");
-        setTimeout(() => navigate("/"), 2000); // Redirige après 2 secondes
+        setTimeout(() => navigate("/dashboard"), 1000); // Redirige après 2 secondes
 
-        console.log("Utilisateur créé:", response.data);
+        // console.log("Utilisateur créé:", response.data);
         // éventuellement rediriger l'utilisateur vers /login
-      }
+    
+      } else {
+        setBackendError(response?.data?.error || "Une erreur est survenue");
+          }
     } catch (err) {
       // Pour les erreurs réseau ou inattendues
       setBackendError(err.response?.data?.message || "Erreur du serveur");
@@ -135,8 +140,8 @@ const Login = () => {
             <div className="success-message">{successMessage}</div>
           )}
 
-          <div onSubmit={onSubmit} className="login-form-wrapper">
-            <form>
+          <div className="login-form-wrapper">
+            <form onSubmit={onSubmit}>
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input

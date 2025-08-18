@@ -47,11 +47,11 @@ const Navbar = () => {
         </button>
 
         {/* Contenu central - Liens de navigation */}
-        <div className={`nav-center ${isMenuOpen ? "open" : ""}`}>
-          <nav className="nav-links">
-            <NavLink className="nav-link" to="/" onClick={() => {closeMenu();scrollToSection('welcomepart')}}>Accueil</NavLink>
-            <NavLink className="nav-link" onClick={() => {closeMenu();scrollToSection('about')}} >A propos</NavLink>
-            <NavLink className="nav-link"  onClick={() => {closeMenu();scrollToSection('contact')}}>Contacts</NavLink>
+        <div className={`navbar-center ${isMenuOpen ? "open" : ""}`}>
+          <nav className="navbar-links">
+            <NavLink className="navbar-link" to="/" onClick={() => {closeMenu();scrollToSection('welcomepart')}}>Accueil</NavLink>
+            <NavLink className="navbar-link" onClick={() => {closeMenu();scrollToSection('about')}} >A propos</NavLink>
+            <NavLink className="navbar-link"  onClick={() => {closeMenu();scrollToSection('contact')}}>Contacts</NavLink>
           </nav>
         </div>
 

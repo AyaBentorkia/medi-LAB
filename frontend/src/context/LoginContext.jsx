@@ -1,13 +1,13 @@
 import React, { createContext, useState, useEffect } from 'react';
 
 export const LoginContext = createContext({
+  token:"",
   role:"",
    isLoggedIn: false,
-  loginHandler: (email, password,role) => {},
+  loginHandler: (token, role) => {},
   logoutHandler: () => {},
 });
 export default LoginContext;
-
 export const Context = ({children}) => {
     const [token,setToken]=useState("");
     const [role,setRole]=useState("");
@@ -24,7 +24,7 @@ export const Context = ({children}) => {
   
  
   const loginHandler = (token,role) => {
-     setToken(token);
+    setToken(token);
     setRole(role);
     setIsLoggedIn(true);
     localStorage.setItem("token", token);
@@ -32,7 +32,11 @@ export const Context = ({children}) => {
   };
 
   const logoutHandler = () => {
+    setToken("");
+    setRole("");
+    setIsLoggedIn(false);
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
   };
 
     return (

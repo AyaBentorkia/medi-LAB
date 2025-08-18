@@ -63,7 +63,8 @@ class UserService {
     
 
     async updateUser(userId, userData) {
-            const {error}= ValidateUpdateUser(userData);
+            const {firstname,lastname,password,phoneNumber,adress,city,birth_date,gender,role,CIN}=userData;
+            const {error}= ValidateUpdateUser({firstname,lastname,password,phoneNumber,adress,city,birth_date,gender,role,CIN});
              if(error){
             throw new AppError(error.details[0].message,400);
             }
