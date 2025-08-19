@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
 import Sidebar from './components/Sidebar';
 import PatientsList from './pages/Patients/PatientsList';
+import AnalysisRequestsList from './pages/AnalysisRequests/AnalysisRequestsList';
 
 function LayoutWithSidebar({ children }) {
   return (
@@ -34,6 +35,7 @@ function App() {
       <Route path='/dashboard' element={<LayoutWithSidebar><Dashboard /></LayoutWithSidebar>} />
       <Route path='/profile' element={<LayoutWithSidebar><Profile /></LayoutWithSidebar>} />
       <Route path='/patients' element={<LayoutWithSidebar><PatientsList /></LayoutWithSidebar>} />
+      <Route path="/demandes-d'analyses" element={<LayoutWithSidebar><AnalysisRequestsList /></LayoutWithSidebar>} />
 
     </Routes>
     </>

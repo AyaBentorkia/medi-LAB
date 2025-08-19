@@ -3,18 +3,19 @@ import Sidebar from '../../components/Sidebar';
 import { User, Mail, Phone, MapPin, Calendar, Users, Edit, Camera } from 'lucide-react';
 import './StaffProfile.css';
 import axios from "axios";
-import EditProfileModal from './EditProfileModal';
+
+const EditProfileModal = React.lazy(() => import('./EditProfileModal'));
 
 const StaffProfile = () => {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
         const response = await axios.get('http://localhost:5000/auth/users/profile', {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 5000 // 5s timeout
@@ -28,9 +29,10 @@ const StaffProfile = () => {
       } catch (error) {
         console.error("Error fetching profile:", error);
         setError(error.message);
-      } finally {
-        setIsLoading(false);
       }
+      //  finally {
+      //   setIsLoading(false);
+      // }
     }
     fetchProfile();
   }, [token])
@@ -51,7 +53,7 @@ const StaffProfile = () => {
       setIsModalOpen(false);
     }
   };
-  if (isLoading) return <div className="loading-spinner">Chargement...</div>;
+  // if (isLoading) return <div className="loading-spinner">Chargement...</div>;
   if (error) return <div className="error-message">Erreur: {error}</div>;
   if (!userData) return <div>Aucune donnée disponible</div>;
 
@@ -162,13 +164,12 @@ const StaffProfile = () => {
       </div>
 
       {isModalOpen && (
-        <EditProfileModal
-          userData={userData}
-          onClose={() => setIsModalOpen(false)}
-        />
+       <React.Suspense fallback={<div>Chargement...</div>}>
+  {isModalOpen && <EditProfileModal userData={userData} onClose={() => setIsModalOpen(false)} onSave={handleSave} />}
+</React.Suspense>
       )}
     </div>
   );
 };
 
-export default StaffProfile;
+export default React.memo(StaffProfile);

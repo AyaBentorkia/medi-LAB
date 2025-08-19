@@ -1,87 +1,58 @@
-"use client"
-
-import { useState } from "react"
+import React, { useEffect, useState } from "react"
 import "./PatientsList.css"
+import { Eye } from "lucide-react"
+import axios from "axios";
+const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
 
 const PatientsList = () => {
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState("all")
+  const [selectedPatients, setSelectedPatients] = useState([])
+  const [patients, setPatients] = useState([])
+ const token = localStorage.getItem("token");
+     const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
 
-  // Mock patient data
-  const patients = [
-    {
-      id: 1,
-      name: "Marie Dubois",
-      age: 34,
-      phone: "01 23 45 67 89",
-      email: "marie.dubois@email.com",
-      lastVisit: "2024-01-15",
-      status: "active",
-      condition: "Consultation générale",
-    },
-    {
-      id: 2,
-      name: "Jean Martin",
-      age: 45,
-      phone: "01 98 76 54 32",
-      email: "jean.martin@email.com",
-      lastVisit: "2024-01-12",
-      status: "inactive",
-      condition: "Suivi cardiologique",
-    },
-    {
-      id: 3,
-      name: "Sophie Laurent",
-      age: 28,
-      phone: "01 11 22 33 44",
-      email: "sophie.laurent@email.com",
-      lastVisit: "2024-01-18",
-      status: "active",
-      condition: "Dermatologie",
-    },
-    {
-      id: 4,
-      name: "Pierre Moreau",
-      age: 52,
-      phone: "01 55 66 77 88",
-      email: "pierre.moreau@email.com",
-      lastVisit: "2024-01-10",
-      status: "pending",
-      condition: "Orthopédie",
-    },
-    {
-      id: 5,
-      name: "Claire Rousseau",
-      age: 39,
-      phone: "01 44 55 66 77",
-      email: "claire.rousseau@email.com",
-      lastVisit: "2024-01-16",
-      status: "active",
-      condition: "Gynécologie",
-    },
-  ]
+  useEffect(()=>{
+    const fetchPatients= async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/Secretary/users?role=Patient", {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000
+        });
+        console.log(response.data.users)
+        setPatients(response?.data?.users);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    }
+    fetchPatients();
+  },[])
+
 
   const filteredPatients = patients.filter((patient) => {
-    const matchesSearch =
-      patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.condition.toLowerCase().includes(searchTerm.toLowerCase())
-
-    const matchesFilter = filterStatus === "all" || patient.status === filterStatus
-
-    return matchesSearch && matchesFilter
+    const fullName = `${patient?.firstname} ${patient?.lastname}`.toLowerCase()
+    return (
+      fullName.includes(searchTerm.toLowerCase()) ||
+      patient?.CIN?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   })
 
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      active: { label: "Actif", class: "status-active" },
-      inactive: { label: "Inactif", class: "status-inactive" },
-      pending: { label: "En attente", class: "status-pending" },
-    }
-
-    return statusConfig[status] || { label: status, class: "status-default" }
+  // Sélection
+  const handleSelectPatient = (patientId) => {
+    setSelectedPatients((prev) =>
+      prev.includes(patientId)
+        ? prev.filter((id) => id !== patientId)
+        : [...prev, patientId]
+    )
   }
-
+ const changeProfileMode=(e,Id,role)=>{
+      setUserId(Id);
+      e.preventDefault();
+        localStorage.setItem("PatientProfileId",Id);
+        setTimeout(() => navigate("/patient-profile"), 1000);  
+     
+    }
   return (
     <div className="patients-list-container">
       {/* Header */}
@@ -89,98 +60,120 @@ const PatientsList = () => {
         <div className="header-content">
           <h1 className="page-title">Liste des Patients</h1>
           <p className="page-subtitle">
-            {filteredPatients.length} patient{filteredPatients.length > 1 ? "s" : ""} trouvé
-            {filteredPatients.length > 1 ? "s" : ""}
+            {filteredPatients.length} patient
+            {filteredPatients.length > 1 ? "s" : ""} trouvé
           </p>
         </div>
-        <button className="add-patient-btn">
-          <span className="btn-icon">+</span>
-          Nouveau Patient
-        </button>
       </div>
 
-      {/* Filters and Search */}
-      <div className="filters-section">
+      {/* Search */}
+      <div className="search-section">
         <div className="search-container">
-          <div className="search-input-wrapper">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              placeholder="Rechercher par nom, email ou condition..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-          </div>
-        </div>
-
-        <div className="filter-container">
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="filter-select">
-            <option value="all">Tous les statuts</option>
-            <option value="active">Actifs</option>
-            <option value="inactive">Inactifs</option>
-            <option value="pending">En attente</option>
-          </select>
+          <input
+            type="text"
+            placeholder="Rechercher par nom, prénom, CIN ou téléphone..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
         </div>
       </div>
 
-      {/* Patients List */}
-      <div className="patients-grid">
-        {filteredPatients.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">👥</div>
-            <h3>Aucun patient trouvé</h3>
-            <p>Essayez de modifier vos critères de recherche</p>
-          </div>
-        ) : (
-          filteredPatients.map((patient) => (
-            <div key={patient.id} className="patient-card">
-              <div className="patient-header">
-                <div className="patient-avatar">
-                  {patient.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </div>
-                <div className="patient-info">
-                  <h3 className="patient-name">{patient.name}</h3>
-                  <p className="patient-age">{patient.age} ans</p>
-                </div>
-                <div className={`status-badge ${getStatusBadge(patient.status).class}`}>
-                  {getStatusBadge(patient.status).label}
-                </div>
-              </div>
-
-              <div className="patient-details">
-                <div className="detail-row">
-                  <span className="detail-icon">📞</span>
-                  <span className="detail-text">{patient.phone}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon">✉️</span>
-                  <span className="detail-text">{patient.email}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon">🏥</span>
-                  <span className="detail-text">{patient.condition}</span>
-                </div>
-                <div className="detail-row">
-                  <span className="detail-icon">📅</span>
-                  <span className="detail-text">
-                    Dernière visite: {new Date(patient.lastVisit).toLocaleDateString("fr-FR")}
-                  </span>
-                </div>
-              </div>
-
-              <div className="patient-actions">
-                <button className="action-btn primary">Voir Détails</button>
-                <button className="action-btn secondary">Modifier</button>
-                <button className="action-btn tertiary">Rendez-vous</button>
-              </div>
-            </div>
-          ))
-        )}
+      {/* Tableau Patients */}
+      <div className="table-container">
+        <table className="patients-table">
+          <thead>
+            <tr>
+              <th>
+                <input
+                  type="checkbox"
+                  onChange={(e) =>
+                    setSelectedPatients(
+                      e.target.checked ? filteredPatients.map((p) => p.id) : []
+                    )
+                  }
+                  checked={
+                    selectedPatients.length === filteredPatients.length &&
+                    filteredPatients.length > 0
+                  }
+                />
+              </th>
+              <th>Nom & Prénom</th>
+              <th>Date de Naissance</th>
+              <th>Téléphone</th>
+              <th>CIN</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredPatients.map((patient) => (
+              <tr
+                key={patient?.id}
+                className={selectedPatients.includes(patient?.id) ? "selected" : ""}
+              >
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selectedPatients.includes(patient?.id)}
+                    onChange={() => handleSelectPatient(patient.id)}
+                  />
+                </td>
+                <td>
+                  <div className="patient-info">
+                    <div className="patient-avatar">
+                      {`${patient?.firstname[0]}${patient?.lastname[0]}`}
+                    </div>
+                    <div className="patient-details">
+                      <div className="patient-name">{`${patient?.firstname} ${patient?.lastname}`}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{patient?.birth_date}</td>
+                <td>{patient?.phoneNumber}</td>
+                <td>{patient?.CIN}</td>
+                <td>
+                  <div className="actions">
+                    <button className="btn-icon" onClick={() => {setSelectedPatientId(patient?.id),setIsModalOpen(true)}}>
+                      <Eye size={18} /> 
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              
+            ))}
+          </tbody>
+        </table>
       </div>
+
+      {/* État vide */}
+      {filteredPatients.length === 0 && (
+        <div className="empty-state">
+          <h3>Aucun patient trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+      )}
+
+      {/* Actions groupées */}
+      {selectedPatients.length > 0 && (
+        <div className="bulk-actions">
+          <span className="selected-count">
+            {selectedPatients.length} patient
+            {selectedPatients.length > 1 ? "s" : ""} sélectionné
+          </span>
+          <div className="bulk-buttons">
+            <button className="btn-secondary">Exporter</button>
+          </div>
+        </div>
+      )}
+      {isModalOpen && (
+  <React.Suspense fallback={<div>Chargement...</div>}>
+    <ProfileModal 
+      patientId={selectedPatientId} 
+      onClose={() => setIsModalOpen(false)} 
+      token={token}
+    />
+  </React.Suspense>
+)}
     </div>
   )
 }

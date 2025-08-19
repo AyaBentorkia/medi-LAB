@@ -178,7 +178,15 @@
 .info-item.full-width {
   grid-column: 1 / -1;
 }
+/* Ajoutez will-change pour les animations */
+.profile-card {
+  will-change: transform, opacity;
+}
 
+/* Utilisez transform au lieu de top/left */
+.modal-overlay {
+  transform: translateZ(0);
+}
 /* Responsive */
 @media (max-width: 768px) {
   .profile-container {
@@ -197,7 +205,26 @@
     justify-content: center;
   }
 }
+/* Animation d'entrée */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.profile-card {
+  animation: fadeInUp 0.5s ease-out forwards;
+  opacity: 0; /* Initial state */
+  animation-delay: calc(var(--order, 0) * 0.1s);
+}
 
+/* Pour stagger les animations */
+.profile-card:nth-child(1) { --order: 1; }
+.profile-card:nth-child(2) { --order: 2; }
 /***********************************************edit Modal*************************************************/
 .modal-overlay {
   position: fixed;

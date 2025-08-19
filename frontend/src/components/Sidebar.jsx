@@ -10,7 +10,7 @@ const Sidebar = () => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
-    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/analyses" },
+    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyses" },
   ]
   const PatientMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },

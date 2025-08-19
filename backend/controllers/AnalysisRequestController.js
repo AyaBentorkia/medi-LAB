@@ -12,7 +12,7 @@ const CreateAnalysisRequest = async (req, res) => {
     try{
         const secretaryId = req.user.id;
         const analysisRequest = await AnalysisRequestService.createAnalysisRequest(req.body, secretaryId);
-        return res.status(201).json({ message: 'Demande d\'analyse créée avec succès', analysisRequest });
+        return res.status(200).json({ message: 'Demande d\'analyse créée avec succès', analysisRequest });
     }
     catch(error){
         console.log(error)
@@ -31,7 +31,7 @@ const CreateAnalysisRequest = async (req, res) => {
  */
 const GetAnalysisRequests = async (req, res) => {
     try{
-        const { total, analysisRequests } = await AnalysisRequestService.getAllAnalysisRequests(req.query);
+        const { total, analysisRequests } = await AnalysisRequestService.getAllAnalysisRequests(req.query, req.user.id);
         return res.status(200).json({ message: 'Demandes d\'analyse récupérées avec succès', total, analysisRequests });
     }
     catch(error){

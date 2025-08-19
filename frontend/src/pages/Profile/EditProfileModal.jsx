@@ -112,4 +112,4 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
   );
 };
 
-export default EditProfileModal;
+export default React.memo(EditProfileModal);

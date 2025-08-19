@@ -59,16 +59,19 @@ class AnalysisRequestService {
             return analysisRequest;
     }
     // méthode pour récupérer toutes les demandes d'analyse
-    async getAllAnalysisRequests(query) {
+    async getAllAnalysisRequests(query,secretaryId) {
             const { page, limit, status} = query;
                          const pageQ = parseInt(page) || 1; // Page actuelle
                     const limitQ = parseInt(limit) || 5;
                     const skip = (pageQ - 1) * limitQ;
-                    let filtre={};
+                    let filtre={SecretaryId: secretaryId};
+                    
                     if (status) filtre.status = { [Op.like]: `%${status}%` };
-            const total = await User.count({ where: filtre });
-            const analysisRequests = await AnalysisRequest.findAll({
-                 where: filtre,
+             const total = await AnalysisRequest.count({ where: filtre });
+
+  // Liste paginée avec filtre
+  const analysisRequests = await AnalysisRequest.findAll({
+    where: filtre,  
                 offset: skip,
                 limit: limitQ,
                 include: [{
