@@ -13,11 +13,7 @@ const AnalysisReport = Sequelize.define('AnalysisReport', {
     type: DataTypes.STRING, // URL ou chemin du fichier
     allowNull: false,
   },
-  // uploadedBy: {
-  //   type: DataTypes.INTEGER,
-  //   allowNull: false,
-  //   references: { model: 'Users', key: 'id' },
-  // },
+
 }, {
   tableName: 'AnalysisResultFiles',
   timestamps: true,

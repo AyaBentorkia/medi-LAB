@@ -16,7 +16,7 @@ const createMultipleResults = async (req, res) => {
       technicianId
     );
 
-    return res.status(201).json({ message: 'Résultats créés avec succès', results });
+    return res.status(200).json({ message: 'Résultats créés avec succès', results });
   } catch (error) {
     if (error instanceof AppError) {
       return res.status(error.statusCode).json({ error: error.message });

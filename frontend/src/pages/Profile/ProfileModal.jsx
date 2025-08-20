@@ -3,13 +3,15 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 
 const ProfileModal = ({patientId,onClose,token}) => {
+      console.log("Patient ID sélectionné :", patientId)
+
     const [userData, setUserData] = useState({});
     const [error, setError] = useState(null);
     useEffect(() => {
     const fetchProfile = async () => {
       try {
         // setIsLoading(true);
-        const response = await axios.get(`http://localhost:5000/Secretary/users/${patientId}`, {
+        const response = await axios.get(`http://localhost:5000/Auth/users/${patientId}`, {
           headers: { Authorization: `Bearer ${token}` },
           timeout: 5000 // 5s timeout
         });

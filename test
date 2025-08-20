@@ -99,3 +99,411 @@ const AnalysisType=Sequelize.define('AnalysisType',{
 }
   
 */
+// import React, { useEffect, useState } from "react"
+// import "./PatientsList.css"
+// import { Eye } from "lucide-react"
+// import axios from "axios";
+// const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
+
+// const PatientsList = () => {
+//   const [searchTerm, setSearchTerm] = useState("")
+//   const [selectedPatients, setSelectedPatients] = useState([])
+//   const [patients, setPatients] = useState([])
+//  const token = localStorage.getItem("token");
+//      const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [selectedPatientId, setSelectedPatientId] = useState(null);
+
+//   useEffect(()=>{
+//     const fetchPatients= async () => {
+//       try {
+//         const response = await axios.get("http://localhost:5000/Secretary/users?role=Patient", {
+//           headers: { Authorization: `Bearer ${token}` },
+//           timeout: 5000
+//         });
+//         console.log(response.data.users)
+//         setPatients(response?.data?.users);
+//       } catch (error) {
+//         console.error("Error fetching patients:", error);
+//       }
+//     }
+//     fetchPatients();
+//   },[])
+
+
+//   const filteredPatients = patients.filter((patient) => {
+//     const fullName = `${patient?.firstname} ${patient?.lastname}`.toLowerCase()
+//     return (
+//       fullName.includes(searchTerm.toLowerCase()) ||
+//       patient?.CIN?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//       patient?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase())
+//     )
+//   })
+
+//   // Sélection
+//   const handleSelectPatient = (patientId) => {
+//     setSelectedPatients((prev) =>
+//       prev.includes(patientId)
+//         ? prev.filter((id) => id !== patientId)
+//         : [...prev, patientId]
+//     )
+//   }
+//  const changeProfileMode=(e,Id,role)=>{
+//       setUserId(Id);
+//       e.preventDefault();
+//         localStorage.setItem("PatientProfileId",Id);
+//         setTimeout(() => navigate("/patient-profile"), 1000);  
+     
+//     }
+//   return (
+//     <div className="patients-list-container">
+//       {/* Header */}
+//       <div className="patients-header">
+//         <div className="header-content">
+//           <h1 className="page-title">Liste des Patients</h1>
+//           <p className="page-subtitle">
+//             {filteredPatients.length} patient
+//             {filteredPatients.length > 1 ? "s" : ""} trouvé
+//           </p>
+//         </div>
+//       </div>
+
+//       {/* Search */}
+//       <div className="search-section">
+//         <div className="search-container">
+//           <input
+//             type="text"
+//             placeholder="Rechercher par nom, prénom, CIN ou téléphone..."
+//             value={searchTerm}
+//             onChange={(e) => setSearchTerm(e.target.value)}
+//             className="search-input"
+//           />
+//         </div>
+//       </div>
+
+//       {/* Tableau Patients */}
+//       <div className="table-container">
+//         <table className="patients-table">
+//           <thead>
+//             <tr>
+//               <th>
+//                 <input
+//                   type="checkbox"
+//                   onChange={(e) =>
+//                     setSelectedPatients(
+//                       e.target.checked ? filteredPatients.map((p) => p.id) : []
+//                     )
+//                   }
+//                   checked={
+//                     selectedPatients.length === filteredPatients.length &&
+//                     filteredPatients.length > 0
+//                   }
+//                 />
+//               </th>
+//               <th>Nom & Prénom</th>
+//               <th>Date de Naissance</th>
+//               <th>Téléphone</th>
+//               <th>CIN</th>
+//               <th>Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {filteredPatients.map((patient) => (
+//               <tr
+//                 key={patient?.id}
+//                 className={selectedPatients.includes(patient?.id) ? "selected" : ""}
+//               >
+//                 <td>
+//                   <input
+//                     type="checkbox"
+//                     checked={selectedPatients.includes(patient?.id)}
+//                     onChange={() => handleSelectPatient(patient.id)}
+//                   />
+//                 </td>
+//                 <td>
+//                   <div className="patient-info">
+//                     <div className="patient-avatar">
+//                       {`${patient?.firstname[0]}${patient?.lastname[0]}`}
+//                     </div>
+//                     <div className="patient-details">
+//                       <div className="patient-name">{`${patient?.firstname} ${patient?.lastname}`}</div>
+//                     </div>
+//                   </div>
+//                 </td>
+//                 <td>{patient?.birth_date}</td>
+//                 <td>{patient?.phoneNumber}</td>
+//                 <td>{patient?.CIN}</td>
+//                 <td>
+//                   <div className="actions">
+//                     <button className="btn-icon" onClick={() => {setSelectedPatientId(patient?.id),setIsModalOpen(true)}}>
+//                       <Eye size={18} /> 
+//                     </button>
+//                   </div>
+//                 </td>
+//               </tr>
+              
+//             ))}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* État vide */}
+//       {filteredPatients.length === 0 && (
+//         <div className="empty-state">
+//           <h3>Aucun patient trouvé</h3>
+//           <p>Essayez de modifier vos critères de recherche</p>
+//         </div>
+//       )}
+
+//       {/* Actions groupées */}
+//       {selectedPatients.length > 0 && (
+//         <div className="bulk-actions">
+//           <span className="selected-count">
+//             {selectedPatients.length} patient
+//             {selectedPatients.length > 1 ? "s" : ""} sélectionné
+//           </span>
+//           <div className="bulk-buttons">
+//             <button className="btn-secondary">Exporter</button>
+//           </div>
+//         </div>
+//       )}
+//       {isModalOpen && (
+//   <React.Suspense fallback={<div>Chargement...</div>}>
+//     <ProfileModal 
+//       patientId={selectedPatientId} 
+//       onClose={() => setIsModalOpen(false)} 
+//       token={token}
+//     />
+//   </React.Suspense>
+// )}
+//     </div>
+//   )
+// }
+
+// export default PatientsList
+
+
+
+
+/************************************************** */
+import React, { useEffect, useState } from "react";
+import "../Patients/PatientsList.css";
+import { Eye, FilePlus } from "lucide-react";
+import axios from "axios";
+import AnalysisReqHeader from "../../components/AnalysisReqHeader";
+
+const AddAnalysisReqModal = React.lazy(() => import("./AddAnalysisReqModal"));
+const AnalysisReqModal = React.lazy(() => import("./AnalysisReqModal"));
+const AddResultModal = React.lazy(() => import("../AnalysisResults/AddResultModal"));
+
+
+
+
+
+
+
+const AnalysisReqList = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRequest, setSelectedRequest] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  const [isModalAddReqOpen, setIsModalAddReqOpen] = useState(false);
+  const [isModalAddResultOpen, setIsModalAddResultOpen] = useState(false);
+  const [isModalViewOpen, setIsModalViewOpen] = useState(false);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/Auth/analysis-requests",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            timeout: 5000,
+          }
+        );
+        console.log(response.data.analysisRequests);
+        setRequests(response?.data?.analysisRequests);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  const filteredRequests = requests.filter((request) => {
+    const fullName = `${request?.firstname} ${request?.lastname}`.toLowerCase();
+    return (
+      fullName.includes(searchTerm.toLowerCase()) ||
+      request?.CIN?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request?.phoneNumber?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
+
+  // Sélection
+  const handleSelectRequest = (requestId) => {
+    setSelectedRequest((prev) =>
+      prev.includes(requestId)
+        ? prev.filter((id) => id !== requestId)
+        : [...prev, requestId]
+    );
+  };
+  const handleStatusChange = async (requestId, newStatus) => {
+    try {
+      await axios.patch(
+        `http://localhost:5000/LabTechnician/analysis-requests/${requestId}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // Met à jour localement pour que ça s'affiche direct
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId ? { ...req, status: newStatus } : req
+        )
+      );
+    } catch (error) {
+      console.error("Erreur maj statut:", error);
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      Terminé: { label: "Terminé", className: "status-active" },
+      "En attente": { label: "En attente", className: "status-pending" },
+      "En cours": { label: "En cours", className: "status-inactive" },
+    };
+
+    const config = statusConfig[status] || statusConfig.active;
+
+    return <span className={`status-badge ${config.className}`}>{status}</span>;
+  };
+  return (
+    <div className="patients-list-container">
+      {/* Header */}
+      <AnalysisReqHeader
+        filteredRequests={filteredRequests}
+        setIsModalAddReqOpen={setIsModalAddReqOpen}
+        role={role}
+        setSearchTerm={setSearchTerm}
+        searchTerm={searchTerm}
+      />
+      {/* Tableau Patients */}
+      <div className="table-container">
+        <table className="patients-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom & Prénom</th>
+              <th>ID du patient</th>
+              <th>Date de création</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredRequests?.map((request) => (
+              <tr key={request?.id}>
+                <td>{request?.id}</td>
+                <td>
+                  <div className="patient-info">
+                    <div className="patient-avatar">
+                      {`${request?.patient?.firstname[0]}${request?.patient?.lastname[0]}`}
+                    </div>
+                    <div className="patient-details">
+                      <div className="patient-name">{`${request?.patient?.firstname} ${request?.patient?.lastname}`}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>{request?.patient?.id}</td>
+                <td>{request?.createdAt.split("T")[0]}</td>
+                <td>
+                  {" "}
+                  {role === "Technicien de laboratoire" ? (
+                    <select
+                      value={request?.status}
+                      onChange={(e) =>
+                        handleStatusChange(request.id, e.target.value)
+                      }
+                    >
+                      <option value="En attente">En attente</option>
+                      <option value="En cours">En cours</option>
+                      <option value="Terminé">Terminé</option>
+                    </select>
+                  ) : (
+                    getStatusBadge(request?.status)
+                  )}
+                </td>
+                <td>
+                  <div className="actions">
+                    <button
+                      className="btn-icon"
+                      onClick={() => {
+                        setIsModalAddReqOpen(false);
+                        setIsModalAddResultOpen(false);
+                        setSelectedRequestId(request?.id);
+                        setIsModalViewOpen(true);
+                      }}
+                    >
+                      <Eye size={18} />
+                    </button>
+                    {role === "Technicien de laboratoire" ? (
+                      <button className="btn-icon">
+                        <FilePlus
+                        size={18}
+                          onClick={() => {
+                            setIsModalViewOpen(false);
+                            setIsModalAddReqOpen(false);
+                            setSelectedRequestId(request?.id);
+                            setIsModalAddResultOpen(true);
+                          }}
+                    />
+                      </button>
+                    ) : null}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* État vide */}
+      {filteredRequests.length === 0 && (
+        <div className="empty-state">
+          <h3>Aucun patient trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+      )}
+
+      {isModalAddReqOpen && (
+        <React.Suspense fallback={<div>Chargement...</div>}>
+          <AddAnalysisReqModal
+            onClose={() => setIsModalAddReqOpen(false)}
+            token={token}
+          />
+        </React.Suspense>
+      )}
+      {isModalViewOpen && selectedRequestId && (
+        <React.Suspense fallback={<div>Chargement...</div>}>
+          <AnalysisReqModal
+            analysisRequestId={selectedRequestId}
+            onClose={() => setIsModalViewOpen(false)}
+            token={token}
+          />
+        </React.Suspense>
+      )}
+      {isModalAddResultOpen && selectedRequestId && (
+        <React.Suspense fallback={<div>Chargement...</div>}>
+          <AddResultModal
+            onClose={() => setIsModalAddResultOpen(false)}
+            analysisRequestId={selectedRequestId}
+            token={token}
+          />
+        </React.Suspense>
+      )}
+    </div>
+  );
+};
+
+export default AnalysisReqList;

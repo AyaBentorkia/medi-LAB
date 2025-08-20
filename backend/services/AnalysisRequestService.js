@@ -46,7 +46,7 @@ class AnalysisRequestService {
       {
         model: AnalysisType,
         as: 'analysisTypes',
-        attributes: ['id', 'title'] 
+        attributes: ['id', 'title','unite'] 
       },
       {
         model: Sample,
@@ -59,12 +59,47 @@ class AnalysisRequestService {
             return analysisRequest;
     }
     // méthode pour récupérer toutes les demandes d'analyse
-    async getAllAnalysisRequests(query,secretaryId) {
+    async getAnalysisRequests(query,secretaryId) {
             const { page, limit, status} = query;
                          const pageQ = parseInt(page) || 1; // Page actuelle
                     const limitQ = parseInt(limit) || 5;
                     const skip = (pageQ - 1) * limitQ;
                     let filtre={SecretaryId: secretaryId};
+                    
+                    if (status) filtre.status = { [Op.like]: `%${status}%` };
+             const total = await AnalysisRequest.count({ where: filtre });
+
+  // Liste paginée avec filtre
+  const analysisRequests = await AnalysisRequest.findAll({
+    where: filtre,  
+                offset: skip,
+                limit: limitQ,
+                include: [{
+                    model: User,
+                    as: 'patient',
+                    attributes: ['id', "CIN",'firstname','lastname','birth_date']
+                },
+            {
+        model: AnalysisType,
+        as: 'analysisTypes',
+        attributes: ['id', 'title'] 
+      },
+      {
+        model: Sample,
+        as: 'samples',
+        attributes: ['id', 'title']
+      }]
+            });
+            return {analysisRequests, total};
+        
+    }
+       // méthode pour récupérer toutes les demandes d'analyse
+    async getAllAnalysisRequests(query) {
+            const { page, limit, status} = query;
+                         const pageQ = parseInt(page) || 1; // Page actuelle
+                    const limitQ = parseInt(limit) || 5;
+                    const skip = (pageQ - 1) * limitQ;
+                    let filtre={};
                     
                     if (status) filtre.status = { [Op.like]: `%${status}%` };
              const total = await AnalysisRequest.count({ where: filtre });
@@ -106,7 +141,7 @@ class AnalysisRequestService {
                 {
                     model: AnalysisType,
                     as: 'analysisTypes',
-                    attributes: ['id', 'title'] 
+        attributes: ['id', 'title','unite', 'StandardValue'] 
                 },
                 {
                     model: Sample,

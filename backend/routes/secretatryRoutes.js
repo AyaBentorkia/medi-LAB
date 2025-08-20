@@ -8,7 +8,8 @@ const {
     GetAnalysisRequestById,
     UpdateAnalysisRequest,
     UpdateAnalysisRequestStatus,
-    DeleteAnalysisRequest} = require('../controllers/AnalysisRequestController');
+    DeleteAnalysisRequest,
+    GetAllAnalysisRequests} = require('../controllers/AnalysisRequestController');
 const { verifySecretaire,
 }= require('../middleware/AuthMiddleware');
 const { ValidateAnalysisRequest } = require('../services/AnalysisRequestService');
@@ -20,6 +21,7 @@ router.get('/users', verifySecretaire, UserController.GetAllUsers);
 router.get('/users/:id', verifySecretaire, UserController.GetUserById);
 router.post('/analysis-requests', verifySecretaire, CreateAnalysisRequest);
 router.get('/analysis-requests', verifySecretaire, GetAnalysisRequests);
+router.get('/analysis-requests', verifySecretaire, GetAllAnalysisRequests);
 router.get('/analysis-requests/:id', verifySecretaire, GetAnalysisRequestById);
 router.patch('/analysis-requests/:id', verifySecretaire, UpdateAnalysisRequest);
 router.delete('/analysis-requests/:id', verifySecretaire, DeleteAnalysisRequest);

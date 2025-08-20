@@ -23,8 +23,8 @@ const Sidebar = () => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
-    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/analyses" },
-    { id: "analyse", label: "Analyses", icon: FileText, path: "/analyse" },
+    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyses" },
+    { id: "analyses", label: "Analyses", icon: FileText, path: "/analyse" },
   ]
     const AdminMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
@@ -39,13 +39,13 @@ const Sidebar = () => {
 
   useEffect(() => {
     switch (role) {
-      case "admin":
+      case "Admin":
         setMenuItems(AdminMenuItems)
         break
-      case "tech":
+      case "Technicien de laboratoire":
         setMenuItems(TechMenuItems)
         break
-      case "patient":
+      case "Patient":
         setMenuItems(PatientMenuItems)
         break
       default:

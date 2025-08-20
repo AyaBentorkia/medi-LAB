@@ -31,7 +31,26 @@ const CreateAnalysisRequest = async (req, res) => {
  */
 const GetAnalysisRequests = async (req, res) => {
     try{
-        const { total, analysisRequests } = await AnalysisRequestService.getAllAnalysisRequests(req.query, req.user.id);
+        const { total, analysisRequests } = await AnalysisRequestService.getAnalysisRequests(req.query, req.user.id);
+        return res.status(200).json({ message: 'Demandes d\'analyse récupérées avec succès', total, analysisRequests });
+    }
+    catch(error){
+        console.log(error)
+         if (error instanceof AppError) {
+        return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ message: 'Server Error' });
+    }
+}
+/**
+ * @desc Recuperer les demandes d'analyse
+ * @route /analysis-requests
+ * @method get
+ * @access private (only admin tech secretary)
+ */
+const GetAllAnalysisRequests = async (req, res) => {
+    try{
+        const { total, analysisRequests } = await AnalysisRequestService.getAllAnalysisRequests(req.query);
         return res.status(200).json({ message: 'Demandes d\'analyse récupérées avec succès', total, analysisRequests });
     }
     catch(error){
@@ -130,5 +149,6 @@ module.exports = {
     GetAnalysisRequestById,
     UpdateAnalysisRequest,
     UpdateAnalysisRequestStatus,
-    DeleteAnalysisRequest
+    DeleteAnalysisRequest,
+    GetAllAnalysisRequests
 }
