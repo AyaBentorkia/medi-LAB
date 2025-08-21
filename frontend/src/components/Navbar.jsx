@@ -1,66 +1,74 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import Logo from "../assets/Lab-logo.png";
+import React, {useState, useEffect} from "react";
+import medicalTeam from "../assets/medical-lab-team.png";
+import labInterior from "../assets/modern-medical-lab.png";
+import { Award, Users, Target, Heart } from "lucide-react";
+import labLogo from "../assets/Lab-logo.png"
 import "./Navbar.css";
+import { useNavigate } from "react-router";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const closeMenu = () => setIsMenuOpen(false);
- const scrollToSection = (sectionId) => {
-    if (window.location.pathname === '/') {
-      // Si nous sommes déjà sur la page d'accueil, faites simplement défiler
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
-    } else {
-      // Sinon, naviguez vers la page d'accueil puis faites défiler
-      navigate('/');
-      setTimeout(() => {
-        const section = document.getElementById(sectionId);
-        if (section) {
-          section.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100); // Petit délai pour laisser le temps à la page de charger
-    }
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+    setIsMenuOpen(false);
   };
 
   return (
     <header className="navbar">
       <div className="navbar-container">
-        {/* Logo à gauche */}
-        <div className="logo-container">
-          <img src={Logo} className="logo" alt="Logo" onClick={() => navigate('/')} />
+        {/* Logo */}
+        <div className="logo" onClick={() => navigate("/")}>
+          <img src={labLogo} alt="Laboratoire Médical" className="logo-img" />
+          <div className="logo-text">
+            <h1>LabMédical</h1>
+            <p>Excellence & Précision</p>
+          </div>
         </div>
 
-        {/* Menu Burger - Mobile seulement */}
-        <button 
-          className={`burger-menu ${isMenuOpen ? "open" : ""}`} 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Menu"
-        >
-          <span className="bar"></span>
-          <span className="bar"></span>
-          <span className="bar"></span>
-        </button>
+        {/* Desktop Navigation */}
+        <nav className={`nav ${isMenuOpen ? "open" : ""}`}>
+          <button onClick={() => scrollToSection("hero")}>Accueil</button>
+          <button onClick={() => scrollToSection("about")}>À Propos</button>
+          <button onClick={() => scrollToSection("services")}>Services</button>
+          <button onClick={() => scrollToSection("contact")}>Contact</button>
+        </nav>
 
-        {/* Contenu central - Liens de navigation */}
-        <div className={`navbar-center ${isMenuOpen ? "open" : ""}`}>
-          <nav className="navbar-links">
-            <NavLink className="navbar-link" to="/" onClick={() => {closeMenu();scrollToSection('welcomepart')}}>Accueil</NavLink>
-            <NavLink className="navbar-link" onClick={() => {closeMenu();scrollToSection('about')}} >A propos</NavLink>
-            <NavLink className="navbar-link"  onClick={() => {closeMenu();scrollToSection('contact')}}>Contacts</NavLink>
-          </nav>
-        </div>
-
-        {/* Boutons Auth à droite */}
+        {/* Auth Buttons */}
         <div className="auth-buttons">
-          <button className="btn login" onClick={() => { navigate('/login'); closeMenu(); }}>Se connecter</button>
-          <button className="btn signup" onClick={() => { navigate('/register'); closeMenu(); }}>S'inscrire</button>
+          <button className="btn-outline" onClick={() => navigate("/login")}>
+            Se connecter
+          </button>
+          <button className="btn-primary" onClick={() => navigate("/register")}>
+            S'inscrire
+          </button>
         </div>
+
+        {/* Mobile Menu Button */}
+        <button className="menu-btn-navbar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          {isMenuOpen ? "✖" : "☰"}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="mobile-menu">
+          <button onClick={() => scrollToSection("hero")}>Accueil</button>
+          <button onClick={() => scrollToSection("about")}>À Propos</button>
+          <button onClick={() => scrollToSection("services")}>Services</button>
+          <button onClick={() => scrollToSection("contact")}>Contact</button>
+          <div className="mobile-auth">
+            <button className="btn-navbar-outline" onClick={() => navigate("/login")}>
+              Se connecter
+            </button>
+            <button className="btn-primary" onClick={() => navigate("/register")}>
+              S'inscrire
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

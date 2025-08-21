@@ -1,48 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import labCover1 from '../assets/labCover.jpg';
-import labCover2 from '../assets/labCover2.jpg';
+import React from "react";
+import heroImage from "../assets/modern-medical-lab.png";
+import { ArrowRight, Microscope, Shield, Clock } from "lucide-react";
 
-// Tableau des images de fond
-const backgroundImages = [
-  `url(${labCover1})`,
-  `url(${labCover2})`,
-  `url(${labCover1})`,
-  `url(${labCover1})`
-];
 
 const WelcomePart = () => {
-  const [currentBg, setCurrentBg] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-      // Change l'image toutes les 300px de scroll
-      const newBgIndex = Math.floor(window.scrollY / 300) % backgroundImages.length;
-      setCurrentBg(newBgIndex);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const scrollToContact = () => {
+    const section = document.getElementById("contact");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
-    <div id='welcomepart'
-      className='welcome-part-wrapper'
-      style={{ 
-        backgroundImage: backgroundImages[currentBg],
-        // Effet de parallaxe léger
-        backgroundPosition: `center ${scrollY * 0.3}px`
-      }}
-    >
-      <div className='welcome-overlay'>
-        <div className='welcome-content'>
-          <h1 className='welcome-title'>Bienvenue dans notre Laboratoire</h1>
-          <p className='welcome-subtitle'>Des analyses médicales précises et fiables</p>
-          <button className='cta-button'>Commencer</button>
+       <section id="hero" className="hero">
+      <div className="hero-bg">
+        <img src={heroImage} alt="Laboratoire médical moderne" />
+        <div className="overlay"></div>
+      </div>
+
+      <div className="hero-content">
+        <div className="badge">Laboratoire certifié ISO 15189</div>
+        <h1>
+          Analyses Médicales
+          <span className="gradient-text"> de Précision</span>
+        </h1>
+        <p>
+          Des résultats fiables et rapides pour accompagner vos professionnels
+          de santé dans leurs diagnostics les plus exigeants.
+        </p>
+        <div className="stats">
+          <div>
+            <h3>15k+</h3>
+            <p>Analyses/mois</p>
+          </div>
+          <div>
+            <h3>24h</h3>
+            <p>Délai moyen</p>
+          </div>
+          <div>
+            <h3>99.8%</h3>
+            <p>Précision</p>
+          </div>
+          <div>
+            <h3>25</h3>
+            <p>Ans d'expérience</p>
+          </div>
+        </div>
+        <div className="hero-buttons">
+          <button className="btn-primary" onClick={scrollToContact}>
+            Prendre Rendez-vous <ArrowRight size={18} />
+          </button>
+          <button
+            className="btn-outline"
+            onClick={() => {
+              const section = document.getElementById("services");
+              if (section) section.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            Nos Services
+          </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

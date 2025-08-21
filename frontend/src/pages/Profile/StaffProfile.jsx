@@ -1,6 +1,6 @@
+// StaffProfile.jsx
 import React, { useEffect, useState } from 'react';
-import Sidebar from '../../components/Sidebar';
-import { User, Mail, Phone, MapPin, Calendar, Users, Edit, Camera } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Edit, Camera } from 'lucide-react';
 import './StaffProfile.css';
 import axios from "axios";
 
@@ -9,18 +9,16 @@ const EditProfileModal = React.lazy(() => import('./EditProfileModal'));
 const StaffProfile = () => {
   const token = localStorage.getItem("token");
   const [userData, setUserData] = useState({});
-  // const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // setIsLoading(true);
         const response = await axios.get('http://localhost:5000/auth/users/profile', {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 5000 // 5s timeout
+          timeout: 5000
         });
-        console.log("Réponse brute :", response.data);
         if (response.status === 200) {
           setUserData(response.data.user);
         } else {
@@ -30,13 +28,11 @@ const StaffProfile = () => {
         console.error("Error fetching profile:", error);
         setError(error.message);
       }
-      //  finally {
-      //   setIsLoading(false);
-      // }
-    }
+    };
     fetchProfile();
-  }, [token])
-    const handleSave = async(updatedData) => {
+  }, [token]);
+
+  const handleSave = async (updatedData) => {
     try {
       const response = await axios.put('http://localhost:5000/auth/users', updatedData, {
         headers: { Authorization: `Bearer ${token}` }
@@ -53,120 +49,128 @@ const StaffProfile = () => {
       setIsModalOpen(false);
     }
   };
-  // if (isLoading) return <div className="loading-spinner">Chargement...</div>;
+
   if (error) return <div className="error-message">Erreur: {error}</div>;
   if (!userData) return <div>Aucune donnée disponible</div>;
 
   return (
-     <div className="profile-container">
-      {/* Header */}
-      <div className="profile-header">
+    <div className="staff-profile-container">
+      <div className="patients-header">
         <div className="header-content">
-          <h1 className="page-title">Profil Personnel</h1>
-          <p className="page-subtitle">Gérez vos informations personnelles</p>
+          <h1 className="page-title">Mon profile</h1>
         </div>
-        <button className="edit-profile-btn" onClick={() => setIsModalOpen(true)}>
-          <Edit size={16} />
-          Modifier
-        </button>
       </div>
-
-      {/* Profile Card */}
-      <div className="profile-card">
-        <div className="profile-header-card">
-          <div className="profile-avatar">
+      {/* Header Section */}
+      <div className="profile-hero-section">
+        <div className="profile-hero-content">
+          <div className="profile-avatar-large">
             {userData?.firstname?.charAt(0)}
             {userData?.lastname?.charAt(0)}
           </div>
-          <div className="profile-info">
-            <h2 className="profile-name">
+          <div className="profile-hero-info">
+            <h1 className="profile-hero-title">
               {userData.firstname} {userData.lastname}
-            </h2>
-            <span className="profile-role-badge">{userData.role}</span>
-            <p className="profile-email">
-              <Mail size={16} />
+            </h1>
+            <div className="profile-role-badge">
+              {userData.role}
+            </div>
+            <p className="profile-hero-subtitle">
+              <Mail size={18} className="profile-icon" />
               {userData.email}
             </p>
           </div>
-          <button className="avatar-edit-btn">
-            <Camera size={14} />
+          <button 
+            className="btn-outline"
+            onClick={() => setIsModalOpen(true)}
+          >
+            <Edit size={18} />
+            Modifier le profil
           </button>
         </div>
       </div>
 
-      {/* Grid Informations */}
-      <div className="profile-grid">
-        {/* Infos Perso */}
-        <div className="profile-card">
-          <div className="card-header">
-            <User size={20} />
-            <h3 className="card-title">Informations Personnelles</h3>
+      {/* Profile Content */}
+      <div className="profile-content-grid">
+        {/* Personal Information Card */}
+        <div className="profile-info-card">
+          <div className="profile-card-header">
+            <User size={24} className="profile-card-icon" />
+            <h2 className="profile-card-title">Informations Personnelles</h2>
           </div>
-          <div className="card-content">
+          <div className="profile-card-content">
             <div className="info-grid">
               <div className="info-item">
-                <label>Prénom</label>
-                <p>{userData.firstname}</p>
+                <span className="info-label">Prénom</span>
+                <span className="info-value">{userData.firstname}</span>
               </div>
               <div className="info-item">
-                <label>Nom de famille</label>
-                <p>{userData.lastname}</p>
+                <span className="info-label">Nom de famille</span>
+                <span className="info-value">{userData.lastname}</span>
               </div>
               <div className="info-item">
-                <label>CIN</label>
-                <p>{userData.CIN}</p>
+                <span className="info-label">CIN</span>
+                <span className="info-value">{userData.CIN}</span>
               </div>
               <div className="info-item">
-                <label>Sexe</label>
-                <p>{userData.gender}</p>
+                <span className="info-label">Sexe</span>
+                <span className="info-value">{userData.gender}</span>
               </div>
-            </div>
-            <div className="info-item full-width">
-              <label>
-                <Calendar size={14} /> Date de naissance
-              </label>
-              <p>{userData.birth_date}</p>
+              <div className="info-item full-width">
+                <span className="info-label">
+                  <Calendar size={16} className="info-icon" />
+                  Date de naissance
+                </span>
+                <span className="info-value">{userData.birth_date}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Infos Contact */}
-        <div className="profile-card">
-          <div className="card-header">
-            <Phone size={20} />
-            <h3 className="card-title">Informations de Contact</h3>
+        {/* Contact Information Card */}
+        <div className="profile-info-card">
+          <div className="profile-card-header">
+            <Phone size={24} className="profile-card-icon" />
+            <h2 className="profile-card-title">Informations de Contact</h2>
           </div>
-          <div className="card-content">
+          <div className="profile-card-content">
             <div className="info-item">
-              <label>
-                <Mail size={14} /> Email
-              </label>
-              <p>{userData.email}</p>
+              <span className="info-label">
+                <Mail size={16} className="info-icon" />
+                Email
+              </span>
+              <span className="info-value">{userData.email}</span>
             </div>
             <div className="info-item">
-              <label>
-                <Phone size={14} /> Téléphone
-              </label>
-              <p>{userData.phoneNumber}</p>
+              <span className="info-label">
+                <Phone size={16} className="info-icon" />
+                Téléphone
+              </span>
+              <span className="info-value">{userData.phoneNumber}</span>
             </div>
             <div className="info-item">
-              <label>
-                <MapPin size={14} /> Adresse
-              </label>
-              <p>{userData.adress}</p>
+              <span className="info-label">
+                <MapPin size={16} className="info-icon" />
+                Adresse
+              </span>
+              <span className="info-value">{userData.adress}</span>
             </div>
             <div className="info-item">
-              <label>Gouvernorat</label>
-              <p>{userData.city}</p>
+              <span className="info-label">Gouvernorat</span>
+              <span className="info-value">{userData.city}</span>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Modal */}
       {isModalOpen && (
-       <React.Suspense fallback={<div>Chargement...</div>}>
-  {isModalOpen && <EditProfileModal userData={userData} onClose={() => setIsModalOpen(false)} onSave={handleSave} />}
-</React.Suspense>
+        <React.Suspense fallback={<div className="loading-modal">Chargement...</div>}>
+          <EditProfileModal 
+            userData={userData} 
+            onClose={() => setIsModalOpen(false)} 
+            onSave={handleSave} 
+          />
+        </React.Suspense>
       )}
     </div>
   );

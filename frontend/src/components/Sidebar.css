@@ -1,19 +1,19 @@
 /* Variables */
-:root {
+/* :root {
   --bg-color: #d3e6e1;
   --primary-color: #2e6642;
   --secondary-color: #7ccf7b;
   --hover-color: #61a15f;
   --button-hover: #608a691a;
   --transition: all 0.3s ease;
-}
+} */
 
 
 /* Styles de la sidebar */
 .sidebar {
   width: 280px;
   min-height: 100vh;
-  background-color: var(--bg-color);
+  background-color: var(--medical-blue-light);
   border-right: 1px solid rgba(46, 102, 66, 0.1);
   display: flex;
   flex-direction: column;
@@ -50,7 +50,7 @@
 .logo-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(135deg, var(--eye-icon-color), var(--accent-color));
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -87,7 +87,7 @@
 }
 
 .collapse-btn:hover {
-  background-color: var(--button-hover);
+  background-color: var(--btn-blue-hover);
 }
 
 .sidebar-nav {
