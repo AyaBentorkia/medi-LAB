@@ -62,7 +62,7 @@ const AnalysisReqRow= React.memo(({
                       <Eye size={18} />
                     </button>
                     {role === "Technicien de laboratoire" ? (
-                      <button className="btn-icon">
+                      <button className="btn-icon-add-file">
                         <FilePlus
                         size={18}
                           onClick={() => {

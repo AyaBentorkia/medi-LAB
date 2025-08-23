@@ -256,21 +256,27 @@
   gap: 8px;
 }
 
-.btn-icon {
+.btn-icon, .btn-icon-add-file {
   width: 32px;
   height: 32px;
   border: none;
   border-radius: 6px;
   background: transparent;
-  color: var(--eye-icon-color);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: var(--transition);
 }
+.btn-icon{
+    color: var(--eye-icon-color);
+}
+.btn-icon-add-file{
+    color: var(--btn-blue-hover);
 
-.btn-icon:hover {
+}
+
+.btn-icon:hover, .btn-icon-add-file:hover {
   background: var(--secondary-color);
   color: var(--primary-color);
 }

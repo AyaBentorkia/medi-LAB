@@ -12,6 +12,11 @@ const AnalysisReport = Sequelize.define('AnalysisReport', {
   fileUrl: {
     type: DataTypes.STRING, // URL ou chemin du fichier
     allowNull: false,
+    default:''
+  },
+  publicId:{ 
+    type:DataTypes.STRING,
+    default:null,
   },
   fileName: {
       type: DataTypes.STRING,
@@ -25,13 +30,13 @@ const AnalysisReport = Sequelize.define('AnalysisReport', {
     }
 
 }, {
-  tableName: 'AnalysisResultFiles',
-  timestamps: true,
+  tableName: 'AnalysisReports',
+  timestamps: true, 
 });
 
 AnalysisReport.associate = models => {
-  AnalysisReport.belongsTo(models.AnalysisRequest, { foreignKey: 'AnalysisRequestId' });
-  AnalysisReport.belongsTo(models.User, { foreignKey: 'uploadedBy' });
+  AnalysisReport.belongsTo(models.AnalysisRequest, { foreignKey: 'AnalysisRequestId', as:'request' });
+  AnalysisReport.belongsTo(models.User, { foreignKey: 'uploadedBy', as:'technician' });
 };
 return AnalysisReport;
 }

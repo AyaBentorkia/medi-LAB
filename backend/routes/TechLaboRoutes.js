@@ -17,7 +17,9 @@ const {
 const { createReport,
   getAllReports,
   getReportById,
-  downloadReport } = require('../controllers/AnalysisReportController.');
+  downloadReport, 
+  ReportUploadCtrl} = require('../controllers/AnalysisReportController.');
+const ReportUpload= require("../middleware/FileUpload")
 
 // Routes for analysis-request management
 router.get('/analysis-requests/:id', verifyTechnicienLabo, GetAnalysisRequestById);
@@ -30,7 +32,8 @@ router.put('/results/:id', verifyTechnicienLabo, updateResult);
 router.delete('/results/:id', verifyTechnicienLabo, deleteResult);
 
 //Results report
-router.post('/reports', verifyTechnicienLabo, createReport);
+router.post('/reports/:id', verifyTechnicienLabo, createReport);
+router.post('/reports/upload/:id', verifyTechnicienLabo, ReportUpload.single("report"), ReportUploadCtrl);
 router.get('/reports', verifyTechnicienLabo, getAllReports);
 router.get('/reports/:id', verifyTechnicienLabo, getReportById);
 router.get('/reports/:id/download', verifyTechnicienLabo, downloadReport);

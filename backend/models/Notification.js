@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 
 // modèle fichier résultat global
 module.exports=(Sequelize,DataTypes)=>{
-const AnalysisReport = Sequelize.define('AnalysisReport', {
+const Notification = Sequelize.define('Notification', {
   SecretaryId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -19,13 +19,13 @@ const AnalysisReport = Sequelize.define('AnalysisReport', {
   }
   
 }, {
-  tableName: 'AnalysisResultFiles',
+  tableName: 'Notifications',
   timestamps: true,
 });
 
-AnalysisReport.associate = models => {
-  AnalysisReport.belongsTo(models.AnalysisRequest, { foreignKey: 'AnalysisRequestId' });
-  AnalysisReport.belongsTo(models.User, { foreignKey: 'uploadedBy' });
+Notification.associate = models => {
+  Notification.belongsTo(models.AnalysisRequest, { foreignKey: 'AnalysisRequestId' });
+  Notification.belongsTo(models.User, { foreignKey: 'uploadedBy' });
 };
-return AnalysisReport;
+return Notification;
 }

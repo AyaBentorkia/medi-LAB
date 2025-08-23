@@ -28,6 +28,7 @@ app.use("/auth", require("./routes/userRoutes"));
 app.use("/Admin", require("./routes/adminRoutes"));
 app.use("/Secretary",require("./routes/secretatryRoutes"));
 app.use("/LabTechnician",require("./routes/TechLaboRoutes"));
+app.use("/Patient",require("./routes/PatientRoutes"));
 
 
 db.sequelize.sync().then(() => {

@@ -10,21 +10,21 @@ const Sidebar = () => {
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
-    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyses" },
+    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyse" },
   ]
   const PatientMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
-    { id: "analyses", label: "Analyses", icon: FileText, path: "/analyses" },
+    { id: "rapports d'analyse", label: "Analyses", icon: FileText, path: "/rapports-d'analyse" },
   ]
   const TechMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
-    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyses" },
-    { id: "analyses", label: "Analyses", icon: FileText, path: "/analyse" },
+    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyse" },
+    { id: "rapports d'analyse", label: "Analyses", icon: FileText, path: "/rapports-d'analyse" },
   ]
     const AdminMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },

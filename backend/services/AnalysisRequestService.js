@@ -3,6 +3,7 @@ const {User,Sample,AnalysisType} = require("../models");
 const AppError = require("../utils/AppError");
 const {Op} = require('sequelize');
 const joi= require('joi');
+const NotificationService = require("./NotificationService");
 
 
 //ce fichier contient les services pour les demandes d'analyse
@@ -55,8 +56,8 @@ class AnalysisRequestService {
       }
     ]
   });
-
-            return analysisRequest;
+    const notification= await NotificationService.createNotification(SecretaryId);
+            return {analysisRequest, notification};
     }
     // méthode pour récupérer toutes les demandes d'analyse
     async getAnalysisRequests(query,secretaryId) {

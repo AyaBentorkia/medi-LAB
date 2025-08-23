@@ -8,10 +8,10 @@ const AppError = require("../utils/AppError");
 const createMultipleResults = async (req, res) => {
   try {
     const technicianId = req.user.id; // supposé récupéré via middleware auth
-    const analysisResultData = req.body; // tableau des résultats à créer
+    // const analysisResultData = req.params.id; // tableau des résultats à créer
 
     const results = await AnalysisResultService.createMultipleResults(
-      analysisResultData,
+      // analysisResultData,
       req.params.id,
       technicianId
     );

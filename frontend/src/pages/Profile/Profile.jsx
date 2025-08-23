@@ -5,7 +5,7 @@ const Profile = () => {
     const role = localStorage.getItem("role");
   return (
     <div>
-      {role !== "Patient" && <StaffProfile />}
+      <StaffProfile />
     </div>
   )
 }
