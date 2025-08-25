@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import "./Sidebar.css"
 import { LayoutDashboard, User, Users, FileText, LogOut,House, ChevronLeft, ChevronRight, Activity } from "lucide-react"
-import { NavLink } from "react-router"
+import { NavLink, useNavigate } from "react-router"
 import logo from '../assets/Lab-logo.png'
+import {LoginContext} from "../context/LoginContext";
 
 const Sidebar = () => {
+  const navigate= useNavigate()
     const SecretaryMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -35,7 +37,8 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [activeItem, setActiveItem] = useState("dashboard")
   const [menuItems, setMenuItems] = useState(SecretaryMenuItems)
-  const role= localStorage.getItem("role");
+  const {role,token,logoutHandler}= useContext(LoginContext);
+  // const role= localStorage.getItem("role");
 
   useEffect(() => {
     switch (role) {
@@ -101,8 +104,12 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-footer">
-        <button className="logout-btn">
-          <div className="nav-icon">
+        <button className="logout-btn"onClick={()=>{
+            logoutHandler();
+               navigate("/");
+            }}>
+          <div className="nav-icon" 
+          >
             <LogOut size={20} />
           </div>
           {!isCollapsed && <span>Déconnexion</span>}

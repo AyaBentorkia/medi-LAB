@@ -1,14 +1,17 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import medicalTeam from "../assets/medical-lab-team.png";
 import labInterior from "../assets/modern-medical-lab.png";
 import { Award, Users, Target, Heart } from "lucide-react";
 import labLogo from "../assets/Lab-logo.png"
 import "./Navbar.css";
 import { useNavigate } from "react-router";
+import { LoginContext } from "../context/LoginContext";
+
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+      const {isLoggedIn,firstname,lastname}=useContext(LoginContext);
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -38,12 +41,18 @@ const Navbar = () => {
 
         {/* Auth Buttons */}
         <div className="auth-buttons">
+          {!isLoggedIn ? (<>
           <button className="btn-outline" onClick={() => navigate("/login")}>
             Se connecter
           </button>
           <button className="btn-primary" onClick={() => navigate("/register")}>
             S'inscrire
           </button>
+          </>):(
+           <button className="btn-user-avatar" onClick={() => navigate("/profile")}>
+            {`${firstname[0]}${lastname[0]}`}
+          </button>  
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -60,12 +69,19 @@ const Navbar = () => {
           <button onClick={() => scrollToSection("services")}>Services</button>
           <button onClick={() => scrollToSection("contact")}>Contact</button>
           <div className="mobile-auth">
-            <button className="btn-navbar-outline" onClick={() => navigate("/login")}>
+            {isLoggedIn ? (
+              <>
+              <button className="btn-navbar-outline" onClick={() => navigate("/login")}>
               Se connecter
             </button>
             <button className="btn-primary" onClick={() => navigate("/register")}>
               S'inscrire
             </button>
+            </>):(
+            <button className="btn-user-avatar" onClick={() => navigate("/profile")}>
+            {`${firstname[0]}${lastname[0]}`}
+          </button>             
+            )}
           </div>
         </div>
       )}

@@ -38,11 +38,18 @@ class AuthService {
   async register(userData) {
         const {error}=ValidateUser(userData);
         if(error){
-            throw new AppError(error.details[0].message,400);}
+            throw new AppError(error?.details[0].message || 'erreur de validation',400);}
         const {firstname,lastname,email,password,phoneNumber,adress,city,birth_date,gender,role,CIN}=userData;
 
-        const user= await User.findOne({ where: { email, phoneNumber, CIN } });
-        if(user) throw new AppError("User already exists ",409);
+        let user= await User.findOne({ where: { email } });
+        if(user) throw new AppError("utilisateur deja existe avec cet email ",409);
+        user= await User.findOne({where:{phoneNumber}})
+                if(user) throw new AppError("utilisateur deja existe avec ce numero de telephone ",409);
+
+        user= await User.findOne({where:{CIN}})
+        if(user) throw new AppError("utilisateur deja existe avec ce numero de CIN ",409);
+
+
         const passwordHashed= await bcrypt.hash(password, 10);
         const newUser = await User.create({
             firstname,

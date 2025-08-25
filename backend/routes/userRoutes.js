@@ -23,6 +23,7 @@ router.get('/analysis-requests/:id', VerifyToken, GetAnalysisRequestById);
 router.get('/analysis-requests', VerifyToken, GetAllAnalysisRequests);
 router.get('/users', VerifyToken, UserController.GetAllUsers);
 router.get('/users/:id', VerifyToken, UserController.GetUserById);
+router.post('/logout',VerifyToken,logout);
 
 
 

@@ -1,20 +1,35 @@
-const [User, AnalysisReport]=require("../models/");
+const {User, AnalysisReport,AnalysisRequest}=require("../models/");
+const AppError = require("../utils/AppError");
 // services/emailService.js
-const User = require('../models/User');
 const transporter = require('../utils/mailer');
+class EmailService{
 
-async function sendAnalysisReportEmail( patientId, analysisReportId) {
-    const patient=await User.findByPk(patientId);
-    const analysisisReport= await AnalysisReport.findByPk(analysisReportId);
+async sendAnalysisReportEmail(analysisReportId) {
+    const analysisisReport= await AnalysisReport.findByPk(analysisReportId,
+      {include:[
+        {
+model: AnalysisRequest,
+            as: 'request',
+            attributes: ['id'],
+            include:[
+               {
+model: User,
+            as: 'patient',
+            attributes: ['firstname', 'lastname','email']    
+              }
+            ]    
+              }
+      ]}
+    );
+    // const patient=await User.findByPk(patientId);
   const mailOptions = {
     from: `"Lab" ${process.env.APP_EMAIL_ADDRESSE}` ,
-    to: patient.email,
-    subject: `Rapport d'analyses médicales - ${patient.firstname + patient.lastname}`,
+    to: analysisisReport?.request?.patient?.email,
+    subject: `Rapport d'analyses médicales - ${analysisisReport?.request?.patient?.firstname + analysisisReport?.request?.patient?.lastname}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.5;">
-        <h2>Bonjour ${patient.firstname},</h2>
+        <h2>Bonjour ${analysisisReport?.request?.patient?.firstname},</h2>
         <p>Veuillez trouver ci-joint votre rapport d’analyses médicales.</p>
-        <p><b>Important :</b> Merci de ne pas répondre à ce mail automatique.</p>
         <br>
         <p>Cordialement,<br>
         <b>Laboratoire d’analyses médicales</b></p>
@@ -23,7 +38,7 @@ async function sendAnalysisReportEmail( patientId, analysisReportId) {
     attachments: [
       {
         filename: `rapport_${Date.now()}.pdf`,
-        path: analysisisReport.path, // chemin vers le fichier généré
+        path: analysisisReport.fileUrl, // chemin vers le fichier généré
         contentType: 'application/pdf',
       },
     ],
@@ -32,10 +47,11 @@ async function sendAnalysisReportEmail( patientId, analysisReportId) {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log('Email envoyé à', toEmail);
   } catch (error) {
     console.error('Erreur lors de l’envoi de l’email :', error);
+    throw new AppError("Erreur lors de l'envoi ",500)
   }
+  return analysisisReport;
 }
-
-module.exports = new sendAnalysisReportEmail();
+}
+module.exports = new EmailService();

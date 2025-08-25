@@ -57,108 +57,101 @@ const AnalysisReqModal = ({ analysisRequestId, token, onClose }) => {
   }
 
   return (
-    <div className="modal-req-view-overlay">
-      <div className="modal-req-view-container">
+     <div className="modal-add-result-overlay analysis-request-modal">
+      <div className="modal-add-result-content">
+
         {/* Header */}
-        <div className="modal-req-view-header">
-          <div>
-            <h2>Demande d'analyse #{analysisRequest?.id}</h2>
-            <div className="status-req-view-container">
-              <span className={getStatusClass(analysisRequest?.status)}>
-                {analysisRequest?.status}
-              </span>
-            </div>
+        <div className="modal-add-result-header">
+          <h2 className="modal-add-result-title">
+            <span className="icon-add-result">📄</span>
+            Demande d'analyse #{analysisRequest?.id}
+          </h2>
+          <div className="status-req-view-container">
+            <span className={getStatusClass(analysisRequest?.status)}>
+              {analysisRequest?.status}
+            </span>
           </div>
-          <button onClick={onClose} className="close-req-view-btn">
-            <X size={24} />
+          <button type="button" className="modal-add-result-close-btn" onClick={onClose}>
+            <X size={20} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="modal-req-view-content">
-          {/* Patient Information */}
-          <div className="section patient-req-view-info">
-            <div className="section-req-view-title">
-              <User size={20} />
-              <h3>Informations du patient</h3>
-            </div>
+        {/* Body */}
+        <div className="modal-add-result-body">
+
+          {/* Infos patient */}
+          <div className="form-add-result-section patient-info-add-result">
+            <h3 className="section-add-result-title">
+              <User size={16} className="icon-add-result" />
+              Informations du patient
+            </h3>
             <div className="grid-req-view">
-              <div>
-                <span>Nom complet:</span>
-                <p>{analysisRequest?.patient?.firstname} {analysisRequest?.patient?.lastname}</p>
+              <div className="form-add-result-group">
+                <label>Nom complet:</label>
+                <input type="text" value={`${analysisRequest?.patient?.firstname || ""} ${analysisRequest?.patient?.lastname || ""}`} disabled />
               </div>
-              <div>
-                <span>CIN:</span>
-                <p>{analysisRequest?.patient?.CIN}</p>
+              <div className="form-add-result-group">
+                <label>CIN:</label>
+                <input type="text" value={analysisRequest?.patient?.CIN || ""} disabled />
               </div>
-              <div>
-                <span>Date de naissance:</span>
-                <p>{new Date(analysisRequest?.patient?.birth_date).toLocaleDateString("fr-FR")}</p>
+              <div className="form-add-result-group">
+                <label>Date de naissance:</label>
+                <input type="text" value={new Date(analysisRequest?.patient?.birth_date).toLocaleDateString("fr-FR")} disabled />
               </div>
-              <div>
-                <span>ID Patient:</span>
-                <p>{analysisRequest?.patient?.id}</p>
+              <div className="form-add-result-group">
+                <label>ID Patient:</label>
+                <input type="text" value={analysisRequest?.patient?.id || ""} disabled />
               </div>
             </div>
           </div>
 
-          {/* Request Details */}
-          <div className="grid-req-view-2">
-            <div className="details-req-view">
-              <div className="detail-req-view-item">
-                <Calendar size={20} />
-                <div>
-                  <span>Date de prélèvement:</span>
-                  <p>{formatDate(analysisRequest?.SamplingDate)}</p>
-                </div>
-              </div>
-              <div className="detail-req-view-item">
-                <Clock size={20} />
-                <div>
-                  <span>Date de création:</span>
-                  <p>{formatDate(analysisRequest?.createdAt)}</p>
-                </div>
-              </div>
+          {/* Détails */}
+          <div className="form-add-result-section analyses-add-result-section">
+            <h3 className="section-add-result-title">
+              <Calendar size={16} className="icon-add-result" />
+              Détails de la demande
+            </h3>
+            <div className="form-add-result-group">
+              <label><Calendar size={14} /> Date de prélèvement:</label>
+              <input type="text" value={formatDate(analysisRequest?.SamplingDate)} disabled />
             </div>
-
+            <div className="form-add-result-group">
+              <label><Clock size={14} /> Date de création:</label>
+              <input type="text" value={formatDate(analysisRequest?.createdAt)} disabled />
+            </div>
             {analysisRequest?.note && (
-              <div className="note-req-view-box">
-                <div className="note-req-view-title">
-                  <FileText size={20} />
-                  <span>Note:</span>
-                </div>
-                <p>{analysisRequest?.note}</p>
+              <div className="form-add-result-group">
+                <label><FileText size={14} /> Note:</label>
+                <textarea value={analysisRequest?.note} disabled />
               </div>
             )}
           </div>
 
-          {/* Analysis Types */}
-          <div className="section-req-view">
-            <div className="section-req-view-title">
-              <TestTube size={20} />
-              <h3>Types d'analyses</h3>
-            </div>
+          {/* Types d'analyses */}
+          <div className="form-add-result-section">
+            <h3 className="section-add-result-title">
+              <TestTube size={16} className="icon-add-result" />
+              Types d'analyses
+            </h3>
             <div className="grid-req-view-3">
               {analysisRequest?.analysisTypes?.map((a) => (
                 <div key={a?.id} className="card-req-view red">
                   <p className="title-req-view">{a?.title}</p>
-                  {/* <p className="subtitle-req-view">ID: {a?.id}</p> */}
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Samples */}
-          <div className="section-req-view">
-            <div className="section-req-view-title">
-              <Droplet size={20} />
-              <h3>Échantillons</h3>
-            </div>
+          {/* Échantillons */}
+          <div className="form-add-result-section">
+            <h3 className="section-add-result-title">
+              <Droplet size={16} className="icon-add-result" />
+              Échantillons
+            </h3>
             <div className="grid-req-view-3">
               {analysisRequest?.samples?.map((s) => (
                 <div key={s?.id} className="card-req-view teal">
                   <p className="title-req-view">{s?.title}</p>
-                  {/* <p className="subtitle-req-view">ID: {s?.id}</p> */}
                 </div>
               ))}
             </div>
@@ -166,9 +159,13 @@ const AnalysisReqModal = ({ analysisRequestId, token, onClose }) => {
         </div>
 
         {/* Footer */}
-        <div className="modal-req-view-footer">
-          <button onClick={onClose} className="btn-req-view cancel">Fermer</button>
-          <button className="btn-req-view primary">Modifier</button>
+        <div className="modal-add-result-footer">
+          <button type="button" className="cancel-add-result-btn btn-add-result" onClick={onClose}>
+            Fermer
+          </button>
+          <button type="button" className="submit-add-result-btn btn-add-result">
+            ✏️ Modifier
+          </button>
         </div>
       </div>
     </div>

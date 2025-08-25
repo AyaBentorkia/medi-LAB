@@ -19,7 +19,8 @@ const { createReport,
   getReportById,
   downloadReport, 
   ReportUploadCtrl} = require('../controllers/AnalysisReportController.');
-const ReportUpload= require("../middleware/FileUpload")
+const ReportUpload= require("../middleware/FileUpload");
+const { SendAnalysisReportEmail } = require('../controllers/EmailController');
 
 // Routes for analysis-request management
 router.get('/analysis-requests/:id', verifyTechnicienLabo, GetAnalysisRequestById);
@@ -37,5 +38,8 @@ router.post('/reports/upload/:id', verifyTechnicienLabo, ReportUpload.single("re
 router.get('/reports', verifyTechnicienLabo, getAllReports);
 router.get('/reports/:id', verifyTechnicienLabo, getReportById);
 router.get('/reports/:id/download', verifyTechnicienLabo, downloadReport);
+
+//Mail
+router.post('/reports/send/:id',verifyTechnicienLabo,SendAnalysisReportEmail);
 
 module.exports = router;

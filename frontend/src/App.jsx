@@ -12,6 +12,7 @@ import Sidebar from './components/Sidebar';
 import PatientsList from './pages/Patients/PatientsList';
 import AnalysisReqList from './pages/AnalysisRequests/AnalysisReqList';
 import AnalysisReportsList from './pages/AnalysisReports/AnalysisReportsList';
+import UsersList from './pages/Users/UsersList';
 
 function LayoutWithSidebar({ children }) {
   return (
@@ -31,13 +32,17 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
+
       <Route path='/about' element={<About />} />
       <Route path='/contact' element={<Contact />} />
       <Route path='/dashboard' element={<LayoutWithSidebar><Dashboard /></LayoutWithSidebar>} />
       <Route path='/profile' element={<LayoutWithSidebar><Profile /></LayoutWithSidebar>} />
       <Route path='/patients' element={<LayoutWithSidebar><PatientsList /></LayoutWithSidebar>} />
+      
       <Route path="/demandes-d'analyse" element={<LayoutWithSidebar><AnalysisReqList /></LayoutWithSidebar>} />
       <Route path="/rapports-d'analyse" element={<LayoutWithSidebar><AnalysisReportsList /></LayoutWithSidebar>} />
+
+      <Route path='/utilisateurs' element={<LayoutWithSidebar><UsersList /></LayoutWithSidebar>} />
 
     </Routes>
     </>

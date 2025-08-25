@@ -1,131 +1,21 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import "./Login.css";
-import axios from "axios";
-import { LoginContext } from "../../context/LoginContext";
+import { useLoginForm } from "../../hooks/useLoginForm";
 
 // Reducers
-const emailReducer = (prevState, action) => {
-  switch (action.name) {
-    case "USER_TYPING":
-      return {
-        value: action.payload,
-        isValid: action.payload.includes("@"),
-        error: action.payload.includes("@") ? null : "Entrer un email valide",
-      };
-    case "USER_TYPING_DONE":
-      return { 
-        value: prevState.value,
-        isValid: prevState.value.includes("@"),
-        error: prevState.value.includes("@") ? null : "Entrer un email valide",
-      };
-    default:
-      return { value: "", isValid: null, error: null };
-  }
-};
 
-const passwordReducer = (prevState, action) => {
-  switch (action.name) {
-    case "USER_TYPING":
-      return {
-        value: action.payload,
-        isValid: action.payload.length >= 8,
-        error:
-          action.payload.length >= 8
-            ? null
-            : "Votre mot de passe doit contenir au moins 8 caractères",
-      };
-    case "USER_TYPING_DONE":
-      return {
-        value: prevState.value,
-        isValid: prevState.value.length >= 8,
-        error:
-          prevState.value.length >= 8
-            ? null
-            : "Votre mot de passe doit contenir au moins 8 caractères",
-      };
-    default:
-      return { value: "", isValid: null, error: null };
-  }
-};
 const Login = () => {
-  const navigate = useNavigate();
-  const [role, setRole] = useState("Patient"); // valeur par défaut
-
-  // States
-  const [email, dispatchEmail] = useReducer(emailReducer, {
-    value: "",
-    isValid: null,
-    error: null,
-  });
-  const [password, dispatchPassword] = useReducer(passwordReducer, {
-    value: "",
-    isValid: null,
-    error: null,
-  });
-  const [formIsValid, setFormIsValid] = useState(false);
-  const { loginHandler } = useContext(LoginContext);
-
-  // Validation effect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setFormIsValid(email.isValid && password.isValid);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [email, password]);
-
-  // Handlers
-  const handleFieldChange = (field) => (e) => {
-    dispatchFields({ type: "UPDATE_FIELD", field, payload: e.target.value });
-  };
-
-  const handleFieldBlur = (field) => () => {
-    dispatchFields({ type: "VALIDATE_FIELD", field });
-  };
-  const [backendError, setBackendError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    if (!formIsValid) {
-      alert("Veuillez remplir correctement tous les champs !");
-      return;
-    }
-
-    const data = {
-      email: email.value,
-      password: password.value,
-      role: role,
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/auth/login",
-        data,
-        {
-          headers: { "content-type": "application/json" },
-          validateStatus: (status) => true,
-        }
-      );
-      console.log("response status: ",response.status)
-      if (response.status == 200) {
-        loginHandler(response?.data?.user?.accessToken, response?.data?.user?.user?.role);
-        setBackendError(null); // reset si succès
-        setSuccessMessage("Connexion réussie !");
-        setTimeout(() => navigate("/dashboard"), 1000); // Redirige après 2 secondes
-
-        // console.log("Utilisateur créé:", response.data);
-        // éventuellement rediriger l'utilisateur vers /login
-    
-      } else {
-        setBackendError(response?.data?.error || "Une erreur est survenue");
-          }
-    } catch (err) {
-      // Pour les erreurs réseau ou inattendues
-      setBackendError(err.response?.data?.message || "Erreur du serveur");
-    }
-  };
-
+  const {
+     role,setRole,
+    email,dispatchEmail,
+    password,dispatchPassword,
+    formIsValid,
+    handleFieldChange,handleFieldBlur,
+    backendError,successMessage,
+    onSubmit
+  } = useLoginForm();
+ 
   return (
     <>
       <div className="Login-container">

@@ -208,7 +208,7 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
           {
             model: User,
             as: "patient",
-            attributes: ["CIN", "firstname", "lastname"]
+            attributes: ["CIN", "firstname", "lastname","email"]
           }
         ]
       },
@@ -278,6 +278,7 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
                           let filtre={};
                          const total = await AnalysisReport.count({ where: filtre});
     const analysisRequest= await AnalysisRequest.findOne({where:{PatientId}});
+    if(!analysisRequest) throw new AppError("Aucun demande trouvé ",404)
     const reports= await AnalysisReport.findAll({where:{AnalysisRequestId:analysisRequest.id},
       include: [
       {

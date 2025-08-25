@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../Patients/PatientsList.css";
 import { Eye, FilePlus } from "lucide-react";
-import axios from "axios";
+import { GetAnalysisReqList, UpdateRequestStatus } from "../../apis/AnalysisRequestApi";
+import { ROLES } from "../../Constants/Roles";
 
 const AddAnalysisReqModal = React.lazy(() => import("./AddAnalysisReqModal"));
 const AnalysisReqModal = React.lazy(() => import("./AnalysisReqModal"));
@@ -34,7 +35,7 @@ const AnalysisReqRow= React.memo(({
                 <td>{request?.createdAt.split("T")[0]}</td>
                 <td>
                   {" "}
-                  {role === "Technicien de laboratoire" ? (
+                  {role === ROLES.ANALYST ? (
                     <select
                       value={request?.status}
                       onChange={(e) =>
@@ -61,7 +62,7 @@ const AnalysisReqRow= React.memo(({
                     >
                       <Eye size={18} />
                     </button>
-                    {role === "Technicien de laboratoire" ? (
+                    {role === ROLES.ANALYST ? (
                       <button className="btn-icon-add-file">
                         <FilePlus
                         size={18}
@@ -90,6 +91,7 @@ const AnalysisReqList = () => {
   const [isModalViewOpen, setIsModalViewOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [statusChanged,setStatusChanged]= useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -97,20 +99,14 @@ const AnalysisReqList = () => {
       const cachedData = localStorage.getItem(cacheKey);
       const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
       const now = new Date().getTime();      
-      if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
+      if (statusChanged && cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
         setRequests(JSON.parse(cachedData));
         setIsLoading(false);
         return;
       }
       try {
         setIsLoading(true);
-        const response = await axios.get(
-          "http://localhost:5000/Auth/analysis-requests",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 5000,
-          }
-        );
+        const response = await GetAnalysisReqList(token);
         console.log("requests : ",response.data.analysisRequests);
         setRequests(response?.data?.analysisRequests);
         localStorage.setItem(cacheKey, JSON.stringify(response?.data?.analysisRequests));
@@ -162,12 +158,8 @@ const AnalysisReqList = () => {
  
     const handleStatusChange = async (requestId, newStatus) => {
     try {
-      await axios.patch(
-        `http://localhost:5000/LabTechnician/analysis-requests/${requestId}`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
+      await UpdateRequestStatus(token,requestId,newStatus);
+      setStatusChanged(true);
       // Met à jour localement pour que ça s'affiche direct
       setRequests((prev) =>
         prev.map((req) =>
@@ -203,7 +195,7 @@ const AnalysisReqList = () => {
             {isLoading ? " (chargement...)" : ""}
           </p>
         </div>
-        {role === "Secrétaire d'accueil" && (
+        {role === ROLES.SECRETARY && (
           <button className="btn-primary-add" onClick={() => setIsModalAddReqOpen(true)}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12h14" />

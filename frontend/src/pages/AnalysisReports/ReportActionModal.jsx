@@ -1,161 +1,145 @@
-import React, { useState } from "react";
+import React from "react";
+import "../AnalysisResults/AddResultModal.css"; // on réutilise le même style
 import { X, Trash2, Send, Download, Eye } from "lucide-react";
-import axios from "axios";
 
-const ReportActionModal = ({ 
-  isOpen, 
-  onClose, 
-  report, 
-  actionType, 
-  token 
+const ReportActionModal = ({
+  isOpen,
+  onClose,
+  report,
+  actionType, // "view" | "download" | "send" | "delete"
+  handleDeleteReport,
+  handleSendReport,
+  message,
 }) => {
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
   if (!isOpen) return null;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (actionType === "delete") {
-      handleDeleteReport();
-      return;
-    }
-
-    if (actionType === "send" && !email) {
-      handleSendReport();
-      return;
-    }
-
-    setIsLoading(true);
-    setMessage("");
-
-    try {
-      // Ici vous ajouterez l'appel API pour envoyer par email
-      const response = await axios.post(
-        `http://localhost:5000/api/reports/${report.id}/send`,
-        { email },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setMessage("Rapport envoyé avec succès!");
-      setTimeout(() => {
-        onClose();
-        setMessage("");
-      }, 2000);
-    } catch (error) {
-      setMessage("Erreur lors de l'envoi: " + error.response?.data?.message || error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const getModalConfig = () => {
+  const renderContent = () => {
     switch (actionType) {
-      case "delete":
-        return {
-          title: "Confirmer la suppression",
-          content: "Êtes-vous sûr de vouloir supprimer ce rapport? Cette action est irréversible.",
-          icon: <Trash2 size={24} className="text-red-500" />,
-          buttonText: "Supprimer",
-          buttonClass: "bg-red-500 hover:bg-red-600"
-        };
-      case "send":
-        return {
-          title: "Envoyer le rapport par email",
-          content: "Entrez l'adresse email du destinataire",
-          icon: <Send size={24} className="text-blue-500" />,
-          buttonText: "Envoyer",
-          buttonClass: "bg-blue-500 hover:bg-blue-600"
-        };
+      case "view":
+        return (
+          <div className="form-add-result-section">
+            <h3 className="section-add-result-title">
+              <Eye size={18} className="icon-add-result" />
+              Aperçu du rapport
+            </h3>
+            <iframe
+              src={report?.fileUrl}
+              title="Rapport PDF"
+              style={{
+                width: "100%",
+                height: "400px",
+                border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+              }}
+            />
+          </div>
+        );
+
       case "download":
-        return {
-          title: "Télécharger le rapport",
-          content: "Voulez-vous télécharger ce rapport?",
-          icon: <Download size={24} className="text-green-500" />,
-          buttonText: "Télécharger",
-          buttonClass: "bg-green-500 hover:bg-green-600"
-        };
+        return (
+          <div className="form-add-result-section">
+            <h3 className="section-add-result-title">
+              <Download size={18} className="icon-add-result" />
+              Télécharger le rapport
+            </h3>
+            <p>Voulez-vous télécharger ce rapport ?</p>
+          </div>
+        );
+
+      case "send":
+        return (
+          <div className="form-add-result-section">
+            <h3 className="section-add-result-title">
+              <Send size={18} className="icon-add-result" />
+              Envoyer le rapport par email
+            </h3>
+            <p>
+              Le rapport sera envoyé à :{" "}
+              <b>{report?.request?.patient?.email || "Adresse non disponible"}</b>
+            </p>
+            {message && <div className="alert success">{message}</div>}
+          </div>
+        );
+
+      case "delete":
+        return (
+          <div className="form-add-result-section" style={{ borderLeft: "4px solid #dc2626" }}>
+            <h3 className="section-add-result-title">
+              <Trash2 size={18} className="icon-add-result" />
+              Supprimer le rapport
+            </h3>
+            <p>Êtes-vous sûr de vouloir supprimer ce rapport ? Cette action est irréversible.</p>
+          </div>
+        );
+
       default:
-        return {
-          title: "Action",
-          content: "",
-          icon: null,
-          buttonText: "Confirmer",
-          buttonClass: "bg-gray-500 hover:bg-gray-600"
-        };
+        return <p>Aucune action sélectionnée.</p>;
     }
   };
-
-  const config = getModalConfig();
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-96 max-w-md mx-4">
+    <div className="modal-add-result-overlay analysis-request-modal">
+      <div className="modal-add-result-content">
         {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center space-x-2">
-            {config.icon}
-            <h2 className="text-xl font-semibold">{config.title}</h2>
-          </div>
+        <div className="modal-add-result-header">
+          <h2 className="modal-add-result-title">
+            {actionType === "view" && <>📄 Consulter le Rapport</>}
+            {actionType === "download" && <>⬇️ Télécharger le Rapport</>}
+            {actionType === "send" && <>✉️ Envoyer le Rapport</>}
+            {actionType === "delete" && <>🗑️ Supprimer le Rapport</>}
+          </h2>
           <button
+            type="button"
+            className="modal-add-result-close-btn"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="mb-4">
-          <p className="text-gray-600 mb-4">{config.content}</p>
-          
-          {actionType === "send" && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email du destinataire
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="exemple@email.com"
-                  required
-                />
-              </div>
-            </form>
-          )}
+        {/* Body */}
+        <div className="modal-add-result-body">{renderContent()}</div>
 
-          {message && (
-            <div className={`p-3 rounded-md ${
-              message.includes("succès") 
-                ? "bg-green-100 text-green-700" 
-                : "bg-red-100 text-red-700"
-            }`}>
-              {message}
-            </div>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex justify-end space-x-3">
+        {/* Footer */}
+        <div className="modal-add-result-footer">
           <button
+            type="button"
+            className="cancel-add-result-btn btn-add-result"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            disabled={isLoading}
           >
             Annuler
           </button>
-          <button
-            onClick={actionType === "send" ? undefined : handleSubmit}
-            disabled={isLoading}
-            className={`px-4 py-2 text-white rounded-md ${config.buttonClass} disabled:opacity-50`}
-          >
-            {isLoading ? "Chargement..." : config.buttonText}
-          </button>
+
+          {actionType === "download" && (
+            <a
+              href={report?.fileUrl}
+              download
+              className="submit-add-result-btn btn-add-result"
+            >
+              <Download size={18} /> Télécharger
+            </a>
+          )}
+
+          {actionType === "send" && (
+            <button
+              type="button"
+              className="submit-add-result-btn btn-add-result"
+              onClick={() => handleSendReport(report?.id)}
+            >
+              <Send size={18} /> Envoyer
+            </button>
+          )}
+
+          {actionType === "delete" && (
+            <button
+              type="button"
+              className="submit-add-result-btn btn-add-result"
+              style={{ background: "linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)" }}
+              onClick={() => handleDeleteReport(report?.id)}
+            >
+              <Trash2 size={18} /> Supprimer
+            </button>
+          )}
         </div>
       </div>
     </div>

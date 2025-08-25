@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react"
+import { GetAllPatients } from "../../apis/UsersApi";
 import "./PatientsList.css"
 import { Eye } from "lucide-react"
-import axios from "axios";
 const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
 
 // Création d'un composant mémoïsé pour les lignes du tableau
@@ -56,7 +56,6 @@ const PatientsList = () => {
       const cachedData = localStorage.getItem(cacheKey);
       const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
       const now = new Date().getTime();
-      console.log("cached data : ", JSON.parse(cachedData));
       // Utiliser les données en cache si elles existent et sont récentes (moins de 5 minutes)
       if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
         setPatients(JSON.parse(cachedData));
@@ -66,12 +65,8 @@ const PatientsList = () => {
       
       try {
         setIsLoading(true);
-        const response = await axios.get("http://localhost:5000/Auth/users?role=Patient", {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 5000
-        });
+        const response = await GetAllPatients(token);
         
-        // const patientsData = response?.data?.users || [];
         setPatients(response?.data?.users);
         
         // Mettre en cache les données (Solution 5)

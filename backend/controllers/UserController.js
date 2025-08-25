@@ -12,10 +12,10 @@ const GetAllUsers= async (req, res) => {
         const { users, total } = await UserService.getAllUsers(req.query);
         return res.status(200).json({ message: "Users trouvés", users, total });
     } catch (error) {
+        console.log(error)
         if (error instanceof AppError) {
             return res.status(error.statusCode).json({ error: error.message });
         }
-        console.log(error)
         return res.status(500).json({ message: 'Server Error' });
     }
 }

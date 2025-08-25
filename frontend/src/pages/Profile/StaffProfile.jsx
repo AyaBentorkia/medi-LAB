@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, Edit, Camera } from 'lucide-react';
 import './StaffProfile.css';
-import axios from "axios";
+import { GetProfile, UpdateProfile } from '../../apis/UsersApi';
 
 const EditProfileModal = React.lazy(() => import('./EditProfileModal'));
 
@@ -11,14 +11,12 @@ const StaffProfile = () => {
   const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [patient, setPatient]=useState();
   
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/auth/users/profile', {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 5000
-        });
+        const response = await GetProfile(token);
         if (response.status === 200) {
           setUserData(response.data.user);
         } else {
@@ -34,9 +32,7 @@ const StaffProfile = () => {
 
   const handleSave = async (updatedData) => {
     try {
-      const response = await axios.put('http://localhost:5000/auth/users', updatedData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await UpdateProfile(token,updatedData);
       if (response.status === 200) {
         setUserData(response.data.updatedUser);
       } else {

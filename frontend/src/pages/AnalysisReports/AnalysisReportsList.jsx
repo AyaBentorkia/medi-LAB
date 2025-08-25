@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 // import "../Patients/PatientsList.css";
-import { Download, Eye, FilePlus, Send, Trash } from "lucide-react";
-import axios from "axios";
+import {  Eye, Send, Trash } from "lucide-react";
+import { DeleteReport, GetAllReports, SendReportByMail } from "../../apis/AnalysisReportApi";
 const ReportActionModal= React.lazy(()=> import("./ReportActionModal"));
+import { ROLES } from "../../Constants/Roles";
 
 const ReportRow= React.memo(({
-    report, onDelete, onSendEmail
+    report, onDelete, onSendEmail, role,
 })=>{
     return (
         <tr key={report?.id}>
@@ -30,6 +31,8 @@ const ReportRow= React.memo(({
                       >
                         <Eye size={18} /> 
                       </button>
+                      {role===ROLES.ANALYST ? (
+                        <>
                       <button 
                         className="btn-icon-add-file" 
                       onClick={() => onSendEmail(report, "send")} >
@@ -40,6 +43,10 @@ const ReportRow= React.memo(({
                       onClick={() => onDelete(report)} >
                         <Trash size={18} /> 
                       </button>
+                      </>
+                      ):(
+                        <></>
+                      )}
                 </div>
             </td>
         </tr>
@@ -58,6 +65,7 @@ const AnalysisReportsList = () => {
   const [selectedFileUrl,setSelectedFileUrl]=useState("");
   const [selectedReport, setSelectedReport] = useState(null);
   const [actionType, setActionType] = useState("");
+  const [message,setMessage]=useState("");
     useEffect(()=>{
         const fetchReports= async()=>{
             const cacheKey = 'reports_data';
@@ -71,25 +79,7 @@ const AnalysisReportsList = () => {
       }
       try {
         setIsLoading(true);
-        let response ;
-        if(role==='Patient'){
-           response= await axios.get(
-          "http://localhost:5000/Patient/reports",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 5000,
-          }
-        );
-        }
-        else{
-          response= await axios.get(
-          "http://localhost:5000/LabTechnician/reports",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 5000,
-          }
-        );
-        }
+        const response = await GetAllReports(token,role);
         
         console.log("reports : ",response.data.reports);
         setReports(response?.data?.reports);
@@ -120,11 +110,14 @@ const filteredReports= useMemo(()=>{
 
    const handleDeleteReport = async () => {
     try {
-      await axios.delete(
-        `http://localhost:5000/api/reports/${selectedReport.id}`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      
+      const response=await DeleteReport(token,selectedReport.id)
+       if(response.status!==200){
+      setMessage("Essayez plus tards")
+      return;
+    }
+
+  setMessage("Rapport envoyé avec succés")
+          setIsActionModalOpen(false);
       // Mettre à jour la liste localement
       setReports(reports.filter(r => r.id !== selectedReport.id));
       setIsActionModalOpen(false);
@@ -132,9 +125,13 @@ const filteredReports= useMemo(()=>{
       // Nettoyer le cache
       localStorage.removeItem('reports_data');
       localStorage.removeItem('reports_data_timestamp');
+
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
     }
+    finally {
+        setIsLoading(false);
+      }
     };
      // Fonction pour ouvrir le modal d'action
   const handleAction = (report, type) => {
@@ -142,8 +139,23 @@ const filteredReports= useMemo(()=>{
     setActionType(type);
     setIsActionModalOpen(true);
   };
-  const handleSendReport= async()=>{
-    return;
+  const handleSendReport= async(reportId)=>{
+    try{
+    const response= await SendReportByMail(token,reportId);
+    if(response.status!==200){
+      setMessage("Essayez plus tards")
+      return;
+    }
+
+  setMessage("Rapport envoyé avec succés")
+          return;
+    }
+   catch (error) {
+      console.error("Erreur lors de l envoi:", error);
+    }
+    finally {
+        setIsLoading(false);
+      }
   }
 
  
@@ -233,6 +245,9 @@ const filteredReports= useMemo(()=>{
             report={selectedReport}
             actionType={actionType}
             token={token}
+            handleDeleteReport={handleDeleteReport}
+            handleSendReport={handleSendReport}
+            message={message}
           />
         </React.Suspense>
       )}
