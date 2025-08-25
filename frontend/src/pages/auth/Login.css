@@ -19,7 +19,6 @@
   align-items: center;
   background: url(../../assets/labcover2.jpg) no-repeat center center/cover;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  animation: fadeInUp 0.8s ease-in-out;
 }
 
 /* Boîte de login centrée avec animation */

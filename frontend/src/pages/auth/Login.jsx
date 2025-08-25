@@ -46,7 +46,7 @@ const Login = () => {
                   onBlur={() => dispatchEmail({ name: "USER_TYPING_DONE" })}
                   required
                 />
-                {email.error && <div className="error-message">{email.error}</div>}
+                {email.error && <div className="error-message-auth">{email.error}</div>}
               </div>
               <div className="form-group">
                 <label htmlFor="password">Mot de passe</label>
@@ -63,7 +63,7 @@ const Login = () => {
                   required
                 />
                 {password.error && (
-                  <div className="error-message">{password.error}</div>
+                  <div className="error-message-auth">{password.error}</div>
                 )}
               </div>
               <div className="form-group">

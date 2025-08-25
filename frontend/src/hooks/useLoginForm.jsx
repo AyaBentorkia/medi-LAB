@@ -61,12 +61,11 @@ export const useLoginForm = ()=>{
 
       if (response.status == 200) {
         loginHandler(response?.data?.user?.accessToken, response?.data?.user?.user?.role,response?.data.user?.user?.firstname,response?.data.user?.user?.lastname);
-        setBackendError(null); // reset si succès
+        setBackendError(null); 
         setSuccessMessage("Connexion réussie !");
-        setTimeout(() => navigate("/dashboard"), 1000); // Redirige après 2 secondes
+        setTimeout(() => navigate("/dashboard"), 1000); 
 
         // console.log("Utilisateur créé:", response.data);
-        // éventuellement rediriger l'utilisateur vers /login
     
       } else {
         setBackendError(response?.data?.error || "Une erreur est survenue");

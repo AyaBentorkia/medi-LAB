@@ -24,20 +24,29 @@ function ValidateUpdateUser(obj){
 class UserService {
 
     async getAllUsers(query) {
-            const { page, limit, status, role } = query;
+            const { page, limit, status, role, search } = query;
              const pageQ = parseInt(page) || 1; // Page actuelle
-        const limitQ = parseInt(limit) || 5;
-        const skip = (pageQ - 1) * limitQ;
+        // const limitQ = parseInt(limit) || 0;
+        // const skip = (pageQ - 1) * limitQ;
         let filtre={};
          
         if (status) filtre.status = { [Op.like]: `%${status}%` };
         if (role) filtre.role = { [Op.like]: `%${role}%` };
-            const total = await User.count({ where: filtre });
+        if (search) {
+    filtre[Op.or] = [
+      { firstname: { [Op.like]: `%${search}%` } },
+      { lastname: { [Op.like]: `%${search}%` } },
+      { CIN: { [Op.like]: `%${search}%` } },
+      { phoneNumber: { [Op.like]: `%${search}%` } },
+      { email: { [Op.like]: `%${search}%` } }
+    ];
+  }
+        const total = await User.count({ where: filtre });
 
             const users = await User.findAll({
                 where: filtre,
-                offset: skip,
-                limit: limitQ,
+                // offset: skip,
+                // limit: limitQ,
                 attributes: { exclude: ['password'] },
             });
             return {users, total};

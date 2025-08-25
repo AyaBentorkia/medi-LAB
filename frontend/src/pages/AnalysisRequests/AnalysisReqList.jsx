@@ -3,6 +3,10 @@ import "../Patients/PatientsList.css";
 import { Eye, FilePlus } from "lucide-react";
 import { GetAnalysisReqList, UpdateRequestStatus } from "../../apis/AnalysisRequestApi";
 import { ROLES } from "../../Constants/Roles";
+import { useFetchRequests } from "../../hooks/useFetchRequests";
+import { useFilterStatus, useSearchFilter } from "../../hooks/useSerachFilter";
+import Pagination from "../../components/Pagination";
+import { usePagination } from "../../hooks/usePagination";
 
 const AddAnalysisReqModal = React.lazy(() => import("./AddAnalysisReqModal"));
 const AnalysisReqModal = React.lazy(() => import("./AnalysisReqModal"));
@@ -81,60 +85,33 @@ const AnalysisReqRow= React.memo(({
 });
 
 const AnalysisReqList = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRequest, setSelectedRequest] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  // const [selectedRequest, setSelectedRequest] = useState([]);
   const [isModalAddReqOpen, setIsModalAddReqOpen] = useState(false);
   const [isModalAddResultOpen, setIsModalAddResultOpen] = useState(false);
   const [isModalViewOpen, setIsModalViewOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [statusChanged,setStatusChanged]= useState(false);
-
-  useEffect(() => {
-    const fetchRequests = async () => {
-      const cacheKey = 'requests_data';
-      const cachedData = localStorage.getItem(cacheKey);
-      const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
-      const now = new Date().getTime();      
-      if (statusChanged && cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
-        setRequests(JSON.parse(cachedData));
-        setIsLoading(false);
-        return;
-      }
-      try {
-        setIsLoading(true);
-        const response = await GetAnalysisReqList(token);
-        console.log("requests : ",response.data.analysisRequests);
-        setRequests(response?.data?.analysisRequests);
-        localStorage.setItem(cacheKey, JSON.stringify(response?.data?.analysisRequests));
-        localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
-        
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-     if (cachedData) {
-          setRequests(JSON.parse(cachedData));
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchRequests();
-  }, [token]);
-
-  const filteredRequests= useMemo(()=>{
-    if(!requests.length ) return [];
-
-    return requests.filter((request)=>{
-      const fullName = `${request?.patient?.firstname || ''} ${request?.patient?.lastname || ''}`.toLowerCase();
-    return (
-        fullName.includes(searchTerm.toLowerCase())
-      );
-    })
-  }, [requests, searchTerm]);
-
+        //recuperer demandes hook
+const {
+        token,role,
+        isLoading,setIsLoading,
+        requests,setRequests,
+        statusChanged,setStatusChanged
+      }= useFetchRequests();
+      //pagination hook
+  const {
+      data: filteredRequests,
+      currentPage,
+      totalPages,
+      totalItems,
+      goToPage,
+      searchTerm,
+      setSearch,
+      selectedFilter,
+      setFilter,
+      hasNextPage,
+      hasPrevPage
+    } = usePagination(requests, 10);
+    // Fonction pour ouvrir la visualisation d'une demande specifique
   const handleViewRequest = React.useCallback((requestId) => {
     console.log("requestId : ",requestId)
     setIsModalAddResultOpen(false);
@@ -142,12 +119,14 @@ const AnalysisReqList = () => {
     setSelectedRequestId(requestId);
     setIsModalViewOpen(true);
   }, []);
+      // Fonction pour ajouter une demande (secretaire)
   const handleAddRequest = React.useCallback((requestId) => {
     setIsModalViewOpen(false);
     setIsModalAddResultOpen(false);
     setSelectedRequestId(requestId);
     setIsModalAddReqOpen(true);
   }, []);
+      // Fonction pour ajouter les resultats d'une demande d'analyse
   const handleAddResult = React.useCallback((requestId) => {
     setIsModalViewOpen(false);
     setIsModalAddReqOpen(false);
@@ -155,7 +134,7 @@ const AnalysisReqList = () => {
     setIsModalAddResultOpen(true);
   }, []);
 
- 
+     // Fonction pour changer le statut de d'une demande d'analyse
     const handleStatusChange = async (requestId, newStatus) => {
     try {
       await UpdateRequestStatus(token,requestId,newStatus);
@@ -170,11 +149,12 @@ const AnalysisReqList = () => {
       console.error("Erreur maj statut:", error);
     }
   };
-
+  
+  //pour changer le style de chaque statut
   const getStatusBadge = (status) => {
     console.log("status:",status)
     const statusConfig = {
-      Terminé: { label: "Terminé", className: "status-active" },
+      "Terminé": { label: "Terminé", className: "status-active" },
       "En attente": { label: "En attente", className: "status-pending" },
       "En cours": { label: "En cours", className: "status-inactive" },
     };
@@ -190,8 +170,8 @@ const AnalysisReqList = () => {
         <div className="header-content">
           <h1 className="page-title">Liste des Demandes d'analyse</h1>
           <p className="page-subtitle">
-            {filteredRequests.length} demande
-            {filteredRequests.length > 1 ? "s" : ""} trouvé
+            {totalItems} demande
+            {totalItems > 1 ? "s" : ""} trouvé
             {isLoading ? " (chargement...)" : ""}
           </p>
         </div>
@@ -210,12 +190,14 @@ const AnalysisReqList = () => {
             type="text"
             placeholder="Rechercher par nom, prénom ..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="search-input"
           />
         </div>
          <div className="filters">
-          <select className="filter-select">
+          <select className="filter-select" value={selectedFilter} 
+  onChange={(e) => setFilter(e.target.value)}
+            >
             <option value="">Tous les statuts</option>
             <option value="Terminé">Terminé</option>
             <option value="En attente">En attente</option>
@@ -242,7 +224,7 @@ const AnalysisReqList = () => {
               <tr>
                 <td colSpan="6" className="loading-skeleton">Chargement...</td>
               </tr>
-            ): filteredRequests?.length === 0 ? (
+            ): filteredRequests.length === 0 ? (
               <tr>
                 <td colSpan="6" className="empty-state">
                   Aucun demande trouvé
@@ -270,7 +252,6 @@ const AnalysisReqList = () => {
       {/* État vide */}
       {!isLoading && filteredRequests.length === 0 && searchTerm && (
         <div className="empty-state">
-          <h3>Aucun demande trouvé</h3>
           <p>Essayez de modifier vos critères de recherche</p>
         </div>
       )}
@@ -300,6 +281,16 @@ const AnalysisReqList = () => {
             token={token}
           />
         </React.Suspense>
+      )}
+      {/* Pagination */}
+       {!isLoading && totalPages > 1 && (
+       <Pagination 
+       hasPrevPage={hasPrevPage}
+       currentPage={currentPage}
+       goToPage={goToPage}
+       totalPages={totalPages}
+       hasNextPage={hasNextPage}
+       />
       )}
     </div>
   );

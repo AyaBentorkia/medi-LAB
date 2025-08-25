@@ -63,7 +63,7 @@ class AnalysisRequestService {
     async getAnalysisRequests(query,secretaryId) {
             const { page, limit, status} = query;
                          const pageQ = parseInt(page) || 1; // Page actuelle
-                    const limitQ = parseInt(limit) || 5;
+                    const limitQ = parseInt(limit) || 10;
                     const skip = (pageQ - 1) * limitQ;
                     let filtre={SecretaryId: secretaryId};
                     
@@ -97,9 +97,9 @@ class AnalysisRequestService {
        // méthode pour récupérer toutes les demandes d'analyse
     async getAllAnalysisRequests(query) {
             const { page, limit, status} = query;
-                         const pageQ = parseInt(page) || 1; // Page actuelle
-                    const limitQ = parseInt(limit) || 5;
-                    const skip = (pageQ - 1) * limitQ;
+                    //      const pageQ = parseInt(page) || 1; // Page actuelle
+                    // const limitQ = parseInt(limit) || 5;
+                    // const skip = (pageQ - 1) * limitQ;
                     let filtre={};
                     
                     if (status) filtre.status = { [Op.like]: `%${status}%` };
@@ -108,8 +108,8 @@ class AnalysisRequestService {
   // Liste paginée avec filtre
   const analysisRequests = await AnalysisRequest.findAll({
     where: filtre,  
-                offset: skip,
-                limit: limitQ,
+                // offset: skip,
+                // limit: limitQ,
                 include: [{
                     model: User,
                     as: 'patient',

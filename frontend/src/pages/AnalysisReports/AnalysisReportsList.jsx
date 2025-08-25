@@ -1,9 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 // import "../Patients/PatientsList.css";
 import {  Eye, Send, Trash } from "lucide-react";
-import { DeleteReport, GetAllReports, SendReportByMail } from "../../apis/AnalysisReportApi";
+import { DeleteReport, SendReportByMail } from "../../apis/AnalysisReportApi";
 const ReportActionModal= React.lazy(()=> import("./ReportActionModal"));
 import { ROLES } from "../../Constants/Roles";
+import { useFetchReports } from "../../hooks/useFetchReports";
+import { useSearchFilter } from "../../hooks/useSerachFilter";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../../components/Pagination";
 
 const ReportRow= React.memo(({
     report, onDelete, onSendEmail, role,
@@ -54,60 +58,30 @@ const ReportRow= React.memo(({
 });
 
 const AnalysisReportsList = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [reports, setReports] = useState([]);
-    const token = localStorage.getItem("token");
-    const role= localStorage.getItem("role");
-    const [isModalViewReportOpen, setIsModalViewReportOpen] = useState(false);
     const [isActionModalOpen, setIsActionModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-  const [selectedReportId, setSelectedReportId] = useState(null);
-  const [selectedFileUrl,setSelectedFileUrl]=useState("");
   const [selectedReport, setSelectedReport] = useState(null);
   const [actionType, setActionType] = useState("");
   const [message,setMessage]=useState("");
-    useEffect(()=>{
-        const fetchReports= async()=>{
-            const cacheKey = 'reports_data';
-      const cachedData = localStorage.getItem(cacheKey);
-      const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
-      const now = new Date().getTime();      
-      if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
-        setReports(JSON.parse(cachedData));
-        setIsLoading(false);
-        return;
-      }
-      try {
-        setIsLoading(true);
-        const response = await GetAllReports(token,role);
-        
-        console.log("reports : ",response.data.reports);
-        setReports(response?.data?.reports);
-        localStorage.setItem(cacheKey, JSON.stringify(response?.data?.reports));
-        localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
-        
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-     if (cachedData) {
-          setReports(JSON.parse(cachedData));
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchReports();
-    },[token])
-const filteredReports= useMemo(()=>{
-    if(!reports.length ) return [];
-
-    return reports.filter((report)=>{
-      const fullName = `${report?.request?.patient?.firstname || ''} ${report?.request?.patient?.lastname || ''}`.toLowerCase();
-    return (
-        fullName.includes(searchTerm.toLowerCase())
-      );
-    })
-  }, [reports, searchTerm]);
-
+  const {
+            role,token,
+            isLoading,setIsLoading,
+            reports,setReports
+        } = useFetchReports();
+   
+const {
+    data: filteredReports,
+    currentPage,
+    totalPages,
+    totalItems,
+    goToPage,
+    searchTerm,
+    setSearch,
+    selectedFilter,
+    setFilter,
+    hasNextPage,
+    hasPrevPage
+  } = usePagination(reports, 10);
+//delete report
    const handleDeleteReport = async () => {
     try {
       const response=await DeleteReport(token,selectedReport.id)
@@ -122,7 +96,6 @@ const filteredReports= useMemo(()=>{
       setReports(reports.filter(r => r.id !== selectedReport.id));
       setIsActionModalOpen(false);
       
-      // Nettoyer le cache
       localStorage.removeItem('reports_data');
       localStorage.removeItem('reports_data_timestamp');
 
@@ -139,6 +112,7 @@ const filteredReports= useMemo(()=>{
     setActionType(type);
     setIsActionModalOpen(true);
   };
+  // Fonction pour envoyer le rapport dans le modal 
   const handleSendReport= async(reportId)=>{
     try{
     const response= await SendReportByMail(token,reportId);
@@ -158,13 +132,6 @@ const filteredReports= useMemo(()=>{
       }
   }
 
- 
-  const handleViewReport= React.useCallback((reportId,fileUrl)=>{
-    setIsModalViewReportOpen(true);
-        setSelectedReportId(reportId);
-        setSelectedFileUrl(fileUrl)
-  })
-
   return (
     <div className="patients-list-container">
           {/* Header */}
@@ -172,8 +139,8 @@ const filteredReports= useMemo(()=>{
             <div className="header-content">
               <h1 className="page-title">Liste des Rapports de Resultat d'analyse</h1>
               <p className="page-subtitle">
-                {filteredReports.length} rapports
-                {filteredReports.length > 1 ? "s" : ""} trouvé
+                {totalItems} rapports
+                {totalItems > 1 ? "s" : ""} trouvé
                 {isLoading ? " (chargement...)" : ""}
               </p>
             </div>
@@ -184,7 +151,7 @@ const filteredReports= useMemo(()=>{
                 type="text"
                 placeholder="Rechercher par nom, prénom ..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => searchTerm(e.target.value)}
                 className="search-input"
               />
             </div>
@@ -221,6 +188,7 @@ const filteredReports= useMemo(()=>{
                     report={report}
                     onSendEmail={handleAction}
                     onDelete={handleAction}
+                    role={role}
                   />
                   ))
                 )}
@@ -250,6 +218,16 @@ const filteredReports= useMemo(()=>{
             message={message}
           />
         </React.Suspense>
+      )}
+        {/* Pagination */}
+      {!isLoading && totalPages > 1 && (
+       <Pagination 
+       hasPrevPage={hasPrevPage}
+       currentPage={currentPage}
+       goToPage={goToPage}
+       totalPages={totalPages}
+       hasNextPage={hasNextPage}
+       />
       )}
     </div>
   );

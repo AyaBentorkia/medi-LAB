@@ -42,7 +42,7 @@ const Register = () => {
                   required
                 />
                 {fields.firstname.error && (
-                  <div className="error-message">{fields.firstname.error}</div>
+                  <div className="error-message-auth">{fields.firstname.error}</div>
                 )}
               </div>
 
@@ -59,7 +59,7 @@ const Register = () => {
                   required
                 />
                 {fields.lastname.error && (
-                  <div className="error-message">{fields.lastname.error}</div>
+                  <div className="error-message-auth">{fields.lastname.error}</div>
                 )}
               </div>
 
@@ -76,7 +76,7 @@ const Register = () => {
                   required
                 />
                 {fields.CIN.error && (
-                  <div className="error-message">{fields.CIN.error}</div>
+                  <div className="error-message-auth">{fields.CIN.error}</div>
                 )}
               </div>
 
@@ -108,7 +108,7 @@ const Register = () => {
                   onBlur={() => dispatchPhone({ name: "USER_TYPING_DONE" })}
                   required
                 />
-                {phone.error && <div className="error-message">{phone.error}</div>}
+                {phone.error && <div className="error-message-auth">{phone.error}</div>}
               </div>
             </div>
 
@@ -128,7 +128,7 @@ const Register = () => {
                   onBlur={() => dispatchEmail({ name: "USER_TYPING_DONE" })}
                   required
                 />
-                {email.error && <div className="error-message">{email.error}</div>}
+                {email.error && <div className="error-message-auth">{email.error}</div>}
               </div>
 
               <div className="form-group">
@@ -146,7 +146,7 @@ const Register = () => {
                   required
                 />
                 {password.error && (
-                  <div className="error-message">{password.error}</div>
+                  <div className="error-message-auth">{password.error}</div>
                 )}
               </div>
 
@@ -163,7 +163,7 @@ const Register = () => {
                   required
                 />
                 {fields.adress.error && (
-                  <div className="error-message">{fields.adress.error}</div>
+                  <div className="error-message-auth">{fields.adress.error}</div>
                 )}
               </div>
 
@@ -191,7 +191,7 @@ const Register = () => {
                   required
                 />
                 {fields.city.error && (
-                  <div className="error-message">{fields.city.error}</div>
+                  <div className="error-message-auth">{fields.city.error}</div>
                 )}
               </div>
             </div>

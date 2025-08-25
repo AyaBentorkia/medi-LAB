@@ -191,14 +191,14 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
  // Récupérer tous les rapports
   async getAllReports(query) {
       const { page, limit} = query;
-                               const pageQ = parseInt(page) || 1; // Page actuelle
-                          const limitQ = parseInt(limit) || 5;
-                          const skip = (pageQ - 1) * limitQ;
+                          //      const pageQ = parseInt(page) || 1; // Page actuelle
+                          // const limitQ = parseInt(limit) || 5;
+                          // const skip = (pageQ - 1) * limitQ;
                           let filtre={};
                          const total = await AnalysisReport.count({ where: filtre});
       const reports= await AnalysisReport.findAll({
-        offset: skip,
-                limit: limitQ,
+        // offset: skip,
+        //         limit: limitQ,
                  include: [
       {
         model: AnalysisRequest,
@@ -273,7 +273,7 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
   async getPatientReports(PatientId,query){
     const { page, limit} = query;
                                const pageQ = parseInt(page) || 1; // Page actuelle
-                          const limitQ = parseInt(limit) || 5;
+                          const limitQ = parseInt(limit) || 10;
                           const skip = (pageQ - 1) * limitQ;
                           let filtre={};
                          const total = await AnalysisReport.count({ where: filtre});

@@ -2,9 +2,13 @@ import React, { useEffect, useState, useMemo } from "react"
 import { GetAllPatients } from "../../apis/UsersApi";
 import "./PatientsList.css"
 import { Eye } from "lucide-react"
+import { useFetchUsers } from "../../hooks/useFetchUsers";
+import { useSearchFilter } from "../../hooks/useSerachFilter";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../../components/Pagination";
 const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
 
-// Création d'un composant mémoïsé pour les lignes du tableau
+// Création d'un composant 
 const PatientRow = React.memo(({ 
   patient, 
   onViewPatient 
@@ -42,71 +46,27 @@ const PatientRow = React.memo(({
 });
 
 const PatientsList = () => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [patients, setPatients] = useState([])
-  const token = localStorage.getItem("token");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+      const [isModalOpen, setIsModalOpen] = useState(false);
+      const [selectedPatientId, setSelectedPatientId] = useState(null);
 
-  useEffect(() => {
-    const fetchPatients = async () => {
-      // Vérifier si les données sont déjà en cache
-      const cacheKey = 'patients_data';
-      const cachedData = localStorage.getItem(cacheKey);
-      const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
-      const now = new Date().getTime();
-      // Utiliser les données en cache si elles existent et sont récentes (moins de 5 minutes)
-      if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
-        setPatients(JSON.parse(cachedData));
-        setIsLoading(false);
-        return;
-      }
-      
-      try {
-        setIsLoading(true);
-        const response = await GetAllPatients(token);
-        
-        setPatients(response?.data?.users);
-        
-        // Mettre en cache les données (Solution 5)
-        localStorage.setItem(cacheKey, JSON.stringify(response?.data?.users));
-        localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
-        
-      } catch (error) {
-        console.error("Error fetching patients:", error);
-        
-        // En cas d'erreur, essayer d'utiliser les données en cache si disponibles
-        if (cachedData) {
-          setPatients(JSON.parse(cachedData));
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
-    fetchPatients();
-  }, [token]);
-
-  // Solution 6: Utilisation de useMemo pour optimiser le filtrage
-  const filteredPatients = useMemo(() => {
-    if (!patients.length) return [];
-    
-    return patients.filter((patient) => {
-      const fullName = `${patient?.firstname || ''} ${patient?.lastname || ''}`.toLowerCase();
-      const cin = patient?.CIN || '';
-      const phone = patient?.phoneNumber || '';
-      
-      return (
-        fullName.includes(searchTerm.toLowerCase()) ||
-        cin.includes(searchTerm) ||
-        phone.includes(searchTerm)
-      );
-    });
-  }, [patients, searchTerm]);
-
-  // Mémoriser la fonction de sélection pour éviter des rendus inutiles
-
+      const {
+        users,setUsers,
+        token,isLoading,setIsLoading,role
+      }= useFetchUsers();
+  
+         const {
+          data: filteredPatients,
+          currentPage,
+          totalPages,
+          totalItems,
+          goToPage,
+          searchTerm,
+          setSearch,
+          selectedFilter,
+          setFilter,
+          hasNextPage,
+          hasPrevPage
+        } = usePagination(users, 10);
 
   const handleViewPatient = React.useCallback((patientId) => {
     setSelectedPatientId(patientId);
@@ -121,8 +81,7 @@ const PatientsList = () => {
         <div className="header-content">
           <h1 className="page-title">Liste des Patients</h1>
           <p className="page-subtitle">
-            {filteredPatients.length} patient
-            {filteredPatients.length !== 1 ? "s" : ""} trouvé
+            {totalItems} patients {totalItems !== 1 ? "s" : ""} trouvé
             {isLoading ? " (chargement...)" : ""}
           </p>
         </div>
@@ -135,7 +94,7 @@ const PatientsList = () => {
             type="text"
             placeholder="Rechercher par nom, prénom, CIN ou téléphone"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             className="search-input"
           />
         </div>
@@ -183,10 +142,9 @@ const PatientsList = () => {
         </table>
       </div>
 
-      {/* État vide (version alternative) */}
+      {/* État vide */}
       {!isLoading && filteredPatients.length === 0 && searchTerm && (
         <div className="empty-state">
-          <h3>Aucun patient trouvé</h3>
           <p>Essayez de modifier vos critères de recherche</p>
         </div>
       )}
@@ -199,6 +157,15 @@ const PatientsList = () => {
             token={token}
           />
         </React.Suspense>
+      )}
+       {!isLoading && totalPages > 1 && (
+       <Pagination
+       hasPrevPage={hasPrevPage}
+       currentPage={currentPage}
+       goToPage={goToPage}
+       totalPages={totalPages}
+       hasNextPage={hasNextPage}
+       />
       )}
     </div>
   )

@@ -286,7 +286,7 @@
   color: #dc3545;
 }
 .btn-primary-add {
-  background: var(--primary-color);
+  background: var(--medical-blue);
   color: white;
   border: none;
   padding: 12px 24px;
@@ -300,7 +300,7 @@
   font-size: 14px;
 }
 .btn-primary-add:hover {
-  background: #1e4a2e;
+  background: var(--btn-blue-hover);
   transform: translateY(-1px);
   box-shadow: var(--card-shadow);
 }

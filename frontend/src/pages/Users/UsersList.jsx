@@ -2,7 +2,13 @@ import React, { useEffect, useState, useMemo } from "react"
 import { Eye } from "lucide-react"
 import axios from "axios";
 import { GetAllUsers } from "../../apis/UsersApi";
+import { useFilterStatus, useSearchFilter } from "../../hooks/useSerachFilter";
+import { ROLES } from "../../Constants/Roles";
+import { useFetchUsers } from "../../hooks/useFetchUsers";
+import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../../components/Pagination";
 const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
+const AddUserModal = React.lazy(()=> import ('./AddUserModal'))
 
   const UserRow = React.memo(({ 
     user, 
@@ -41,78 +47,40 @@ const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
     );
   });
 const UsersList = () => {
-
-    const [searchTerm, setSearchTerm] = useState("")
-    const [users, setUsers] = useState([])
-    const token = localStorage.getItem("token");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-  
-    useEffect(() => {
-      const fetchUsers = async () => {
-        // Vérifier si les données sont déjà en cache
-        const cacheKey = 'users_data';
-        const cachedData = localStorage.getItem(cacheKey);
-        const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
-        const now = new Date().getTime();
-        // Utiliser les données en cache si elles existent et sont récentes (moins de 5 minutes)
-        if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
-          setUsers(JSON.parse(cachedData));
-          setIsLoading(false);
-          return;
-        }
-        
-        try {
-          setIsLoading(true);
-          const response = await GetAllUsers(token);
-          
-          setUsers(response?.data?.users);
-          
-          // Mettre en cache les données (Solution 5)
-          localStorage.setItem(cacheKey, JSON.stringify(response?.data?.users));
-          localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
-          
-        } catch (error) {
-          console.error("Error fetching users:", error);
-          
-          // En cas d'erreur, essayer d'utiliser les données en cache si disponibles
-          if (cachedData) {
-            setUsers(JSON.parse(cachedData));
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      
-      fetchUsers();
-    }, [token]);
-  
-    // Solution 6: Utilisation de useMemo pour optimiser le filtrage
-    const filteredUsers = useMemo(() => {
-      if (!users.length) return [];
-      
-      return users.filter((user) => {
-        const fullName = `${user?.firstname || ''} ${user?.lastname || ''}`.toLowerCase();
-        const cin = user?.CIN || '';
-        const phone = user?.phoneNumber || '';
-        
-        return (
-          fullName.includes(searchTerm.toLowerCase()) ||
-          cin.includes(searchTerm) ||
-          phone.includes(searchTerm)
-        );
-      });
-    }, [users, searchTerm]);
-  
-    // Mémoriser la fonction de sélection pour éviter des rendus inutiles
-  
+      const [isModalAddUserOpen, setIsModalAddUserOpen] = useState(false);
+     const {
+            users,setUsers,
+            token,isLoading,setIsLoading,role
+          }= useFetchUsers();
+    
+   const {
+    data: filteredUsers,
+    currentPage,
+    totalPages,
+    totalItems,
+    goToPage,
+    searchTerm,
+    setSearch,
+    selectedFilter,
+    setFilter,
+    hasNextPage,
+    hasPrevPage
+  } = usePagination(users, 10);
+
   
     const handleViewUser = React.useCallback((userId) => {
       setSelectedUserId(userId);
+      setIsModalAddUserOpen(false);
       setIsModalOpen(true);
       console.log("user ID sélectionné :", userId)
     }, []);
+
+    const handleAddUser= React.useCallback(() => {
+      setIsModalOpen(false);
+      setIsModalAddUserOpen(true);
+    },[])
   return (
      <div className="patients-list-container">
           {/* Header */}
@@ -120,11 +88,16 @@ const UsersList = () => {
             <div className="header-content">
               <h1 className="page-title">Liste des Users</h1>
               <p className="page-subtitle">
-                {filteredUsers.length} patient
-                {filteredUsers.length !== 1 ? "s" : ""} trouvé
+            {totalItems} utilisateur{totalItems !== 1 ? "s" : ""} trouvé
                 {isLoading ? " (chargement...)" : ""}
               </p>
             </div>
+            <button className="btn-primary-add" onClick={()=>setIsModalAddUserOpen(true)} >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Nouveau utilisateur
+          </button>
           </div>
     
           {/* Search */}
@@ -134,10 +107,21 @@ const UsersList = () => {
                 type="text"
                 placeholder="Rechercher par nom, prénom, CIN ou téléphone"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearch(e.target.value)}
                 className="search-input"
               />
             </div>
+            <div className="filters">
+          <select className="filter-select" value={selectedFilter} 
+  onChange={(e) => setFilter(e.target.value)}
+            >
+            <option value="">Tous les roles</option>
+            <option value={ROLES.PATIENT}>{ROLES.PATIENT}</option>
+            <option value={ROLES.ANALYST}>{ROLES.ANALYST}</option>
+            <option value={ROLES.SECRETARY}>{ROLES.SECRETARY}</option>
+            <option value={ROLES.ADMIN}>{ROLES.ADMIN}</option>
+          </select>
+        </div>
           </div>
     
           {/* Tableau Patients */}
@@ -186,7 +170,7 @@ const UsersList = () => {
           {/* État vide (version alternative) */}
           {!isLoading && filteredUsers.length === 0 && searchTerm && (
             <div className="empty-state">
-              <h3>Aucun patient trouvé</h3>
+              <h3>Aucun utilisateur trouvé</h3>
               <p>Essayez de modifier vos critères de recherche</p>
             </div>
           )}
@@ -200,6 +184,25 @@ const UsersList = () => {
               />
             </React.Suspense>
           )}
+          {isModalAddUserOpen && (
+            <React.Suspense fallback={<div>Chargement...</div>}>
+              <AddUserModal 
+                onClose={() => setIsModalAddUserOpen(false)} 
+                token={token}
+              />
+            </React.Suspense>
+          )}
+          {/* Pagination */}
+      {!isLoading && totalPages > 1 && (
+       <Pagination 
+       hasPrevPage={hasPrevPage}
+       currentPage={currentPage}
+       goToPage={goToPage}
+       totalPages={totalPages}
+       hasNextPage={hasNextPage}
+       />
+      )}
+          
         </div>
   )
 }
