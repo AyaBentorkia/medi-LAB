@@ -6,7 +6,7 @@ import { login } from "../apis/AuthApi";
 
 export const useLoginForm = ()=>{
      const navigate = useNavigate();
-  const [role, setRole] = useState("Patient"); // valeur par défaut
+  // const [role, setRole] = useState(""); // valeur par défaut
 
   // States
   const [email, dispatchEmail] = useReducer(emailReducer, {
@@ -20,7 +20,7 @@ export const useLoginForm = ()=>{
     error: null,
   });
   const [formIsValid, setFormIsValid] = useState(false);
-  const { loginHandler } = useContext(LoginContext);
+  const { loginHandler,parseJwt } = useContext(LoginContext);
 
   // Validation effect
   useEffect(() => {
@@ -51,16 +51,20 @@ export const useLoginForm = ()=>{
     const data = {
       email: email.value,
       password: password.value,
-      role: role,
+      // role: role,
     };
 
     try {
       const response = await login(data);
       console.log("response status: ",response.status)
               console.log("response login : ",response)
-
+        const tokenDecoded =parseJwt(response?.data?.user?.accessToken);
+      const role= tokenDecoded.userInfo?.role;
+      console.log("role : ",role)
+        console.log("role issue de token : ",tokenDecoded)
       if (response.status == 200) {
-        loginHandler(response?.data?.user?.accessToken, response?.data?.user?.user?.role,response?.data.user?.user?.firstname,response?.data.user?.user?.lastname);
+
+        loginHandler(response?.data?.user?.accessToken,role,response?.data.user?.user?.firstname,response?.data.user?.user?.lastname);
         setBackendError(null); 
         setSuccessMessage("Connexion réussie !");
         setTimeout(() => navigate("/dashboard"), 1000); 
@@ -76,7 +80,7 @@ export const useLoginForm = ()=>{
     }
   };
   return {
-    role,setRole,
+    // role,setRole,
     email,dispatchEmail,
     password,dispatchPassword,
     formIsValid,setFormIsValid,

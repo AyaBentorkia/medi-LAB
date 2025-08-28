@@ -11,7 +11,7 @@ const CreateSample= async (req, res)=>{
     try{
         const { title } = req.body;
         const sample = await SampleService.createSample(title);
-        return res.status(201).json({ message: 'Échantillon créé avec succès', sample });
+        return res.status(200).json({ message: 'Échantillon créé avec succès', sample });
     }
     catch(error){
          if (error instanceof AppError) {

@@ -5,7 +5,7 @@ import { usePagination } from '../../hooks/usePagination';
 import Pagination from '../../components/Pagination';
 import ViewTypeModal from './ViewTypeModal';
 const AddNewTypeModal = React.lazy(() => import('./AddNewTypeModal.jsx'));
-
+const EditAnalysisTypeModal= React.lazy(() => import('./EditAnalysisTypeModal'));
 
 const TypeRow = React.memo(({ 
     type, 
@@ -37,7 +37,7 @@ const TypeRow = React.memo(({
             </button>
              <button 
               className="btn-icon" 
-              onClick={() => onUpdateType(type?.id)}
+              onClick={() => onUpdateType(type)}
             >
               <Pencil size={18} /> 
             </button>
@@ -56,12 +56,14 @@ const AnalysisTypes =  () => {
     const [selectedtypeId, setSelectedtypeId] = useState(null);
       const [isModalAddtypeOpen, setIsModalAddtypeOpen] = useState(false);
       const [isModalViewOpen,setIsModalViewOpen]=useState(false);
+      const [type,setType]=useState({});
      const {
         token,role,
         isLoading,setIsLoading,
         types,setTypes,handleUpdateType,
         isUpdateModalOpen,setIsUpdateModalOpen,
       }= useFetchTypes();
+      // const {type}=fetchOneType(selectedtypeId);
     
    const {
     data: filteredtypes,
@@ -90,8 +92,9 @@ const AnalysisTypes =  () => {
       setIsModalAddtypeOpen(true);
     },[])
 
-     const handleUpdateAnalysisType= React.useCallback((typeId) => {
-      setSelectedtypeId(typeId);
+     const handleUpdateAnalysisType= React.useCallback((type) => {
+      setSelectedtypeId(type.id);
+      setType(type);
       setIsModalViewOpen(false);
       setIsModalAddtypeOpen(false);
       setIsUpdateModalOpen(true);
@@ -198,9 +201,11 @@ const AnalysisTypes =  () => {
           )}
             {isUpdateModalOpen && (
             <React.Suspense fallback={<div>Chargement...</div>}>
-              <EditTypeModal 
+              <EditAnalysisTypeModal 
               selectedtypeId={selectedtypeId}
-                onClose={() => setIsUpdateModalOpen(false)} 
+              type={type}
+                onClose={() => setIsUpdateModalOpen(false)
+                } 
               />
             </React.Suspense>
           )}

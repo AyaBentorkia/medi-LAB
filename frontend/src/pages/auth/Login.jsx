@@ -66,10 +66,10 @@ const Login = () => {
                   <div className="error-message-auth">{password.error}</div>
                 )}
               </div>
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label htmlFor="role">Role</label>
                 <select className="role-select" id="role" name="role" value={role} onChange={(e) => setRole(e.target.value)} required>
-                  {/* <option value="">Sélectionner un rôle</option> */}
+                  {// <option value="">Sélectionner un rôle</option> }
                   <option value="Patient">Patient</option>
                   <option value="Technicien de laboratoire">
                     Technicien de laboratoire
@@ -79,7 +79,7 @@ const Login = () => {
                   </option>
                   <option value="Admin">Admin</option>
                 </select>
-              </div>
+              </div> */}
               <div className="login-btn-wrapper">
                 <button className={`login-btn ${!formIsValid ? "disabled-btn" : ""}`}
                 disabled={!formIsValid}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { User, Mail, Phone, MapPin, Calendar, X } from 'lucide-react';
 import { CreateNewType } from '../../apis/AnalysisTypesApi';
+import { useCreateType } from '../../hooks/useTypes';
 
 const AddNewTypeModal = ({  onClose }) => {
    const {
@@ -10,7 +11,7 @@ const AddNewTypeModal = ({  onClose }) => {
     backendError,setBackendError,
     successMessage,setSuccessMessage,
     onSubmit,
-  } = CreateNewType();
+  } = useCreateType();
   return (
      <div className="modal-add-result-overlay analysis-request-modal">
         <div className="modal-add-result-content">
@@ -77,6 +78,18 @@ const AddNewTypeModal = ({  onClose }) => {
                     value={fields?.unite.value}
                     onChange={handleFieldChange("unite")}
                     onBlur={handleFieldBlur("unite")}
+                    required
+                  />
+                  {fields?.unite.error && <div className="error-message">{fields?.unite.error}</div>}
+                </div>
+                 <div className="form-add-result-group">
+                <label>Valeur standard</label>
+                <input
+                  type="text"
+                  name="StandardValue"
+                    value={fields?.StandardValue.value}
+                    onChange={handleFieldChange("StandardValue")}
+                    onBlur={handleFieldBlur("StandardValue")}
                     required
                   />
                   {fields?.unite.error && <div className="error-message">{fields?.unite.error}</div>}

@@ -24,11 +24,11 @@ function ValidateUser(obj){
 }
 //Validation de login de user
 function validateLoginUser(obj) {
-    const ALLOWED_ROLES = ['Admin', 'Patient', "Secrétaire d'accueil",'Technicien de laboratoire'];
+    // const ALLOWED_ROLES = ['Admin', 'Patient', "Secrétaire d'accueil",'Technicien de laboratoire'];
     const schema = joi.object({
         email:joi.string().trim().email().required(),
         password:joi.string().min(8).required(),
-        role:joi.string().valid(...ALLOWED_ROLES).required(),
+        // role:joi.string().valid(...ALLOWED_ROLES).required(),
     });
     return schema.validate(obj);
   }
@@ -71,11 +71,11 @@ class AuthService {
       if(!email || !password) {
         throw new AppError('Email et mot de passe requis', 400);
       }
-      const {error}=validateLoginUser({email,password,role});
+      const {error}=validateLoginUser({email,password});
       if(error){
             throw new AppError(error.details[0].message,400);
         }
-      const user = await User.findOne({ where: { email ,role} });
+      const user = await User.findOne({ where: { email} });
       if (!user ) {
         throw new AppError('user invalide', 401);
       }

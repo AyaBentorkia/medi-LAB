@@ -1,68 +1,64 @@
 import { useContext, useEffect, useReducer, useState } from "react";
 import LoginContext from "../context/LoginContext";
-import {
-  CreateNewType,
-  GetAllTypes,
-  GetTypeById,
-  UpdateType,
-} from "../apis/AnalysisTypesApi";
+import { CreateNewSample, GetAllSamples, GetSampleById, UpdateSample } from "../apis/SamplesApi";
 import { fieldsReducer } from "../reducers/TypeReducer";
-export const useFetchTypes = () => {
+
+export const useFetchSamples = () => {
   const { token, role } = useContext(LoginContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [types, setTypes] = useState([]);
+  const [samples, setSamples] = useState([]);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [typesChanged, setTypesChanged] = useState(false);
+  const [samplesChanged, setSamplesChanged] = useState(false);
 
   useEffect(() => {
-    const fetchtypes = async () => {
-      const cacheKey = "types_data";
+    const fetchsamples = async () => {
+      const cacheKey = "samples_data";
       const cachedData = localStorage.getItem(cacheKey);
       const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
       const now = new Date().getTime();
       if (
-        typesChanged &&
+        samplesChanged &&
         cachedData &&
         cacheTimestamp &&
         now - cacheTimestamp < 300000
       ) {
-        setTypes(JSON.parse(cachedData));
+        setSamples(JSON.parse(cachedData));
         setIsLoading(false);
-        setTypesChanged(false);
+        setSamplesChanged(false);
         return;
       }
       try {
         setIsLoading(true);
-        const response = await GetAllTypes(token);
-        console.log("types : ", response.data.analysisTypes);
-        setTypes(response?.data?.analysisTypes);
+        const response = await GetAllSamples(token);
+        console.log("samples : ", response.data.samples);
+        setSamples(response?.data?.samples);
         localStorage.setItem(
           cacheKey,
-          JSON.stringify(response?.data?.analysisTypes)
+          JSON.stringify(response?.data?.samples)
         );
         localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
       } catch (error) {
-        console.error("Error fetching types:", error);
+        console.error("Error fetching samples:", error);
         if (cachedData) {
-          setTypes(JSON.parse(cachedData));
+          setSamples(JSON.parse(cachedData));
         }
       } finally {
         setIsLoading(false);
       }
     };
-    fetchtypes();
-  }, [token,typesChanged]);
+    fetchsamples();
+  }, [token,samplesChanged]);
 
-  const handleUpdateType = async (typeId, updatedData) => {
+  const handleUpdateSample = async (sampleId, updatedData) => {
     try {
-      const response = await UpdateType(token, typeId, updatedData);
+      const response = await UpdateSample(token, sampleId, updatedData);
       if (response.status === 200) {
         console.log(updatedData);
-        setTypes((prev) =>
-          prev.map((t) => (t.id === typeId ? response.data.analysisType : t))
+        setSamples((prev) =>
+          prev.map((t) => (t.id === sampleId ? response.data.sample : t))
         );
         
-        setTypesChanged(true);
+        setSamplesChanged(true);
       } else {
         throw new Error("Réponse inattendue");
       }
@@ -77,70 +73,58 @@ export const useFetchTypes = () => {
     role,
     isLoading,
     setIsLoading,
-    types,
-    setTypes,
+    samples,
+    setSamples,
     isUpdateModalOpen,
     setIsUpdateModalOpen,
-    handleUpdateType,
+    handleUpdateSample,
   };
 };
 
-export const fetchOneType = (typeId) => {
+export const fetchOneSample = (sampleId) => {
   const { token, role } = useContext(LoginContext);
   const [isLoading, setIsLoading] = useState(true);
-  const [type, setType] = useState({});
+  const [sample, setSample] = useState({});
   const [error, setError] = useState("");
   useEffect(() => {
-    const fetchType = async () => {
+    const fetchsample = async () => {
       try {
         setIsLoading(true);
-        const response = await GetTypeById(token, typeId);
-        console.log("types : ", response.data.analysisType);
-        setType(response?.data?.analysisType);
+        const response = await GetSampleById(token, sampleId);
+        console.log("samples : ", response.data.sample);
+        setSample(response?.data?.sample);
       } catch (error) {
-        console.error("Error fetching types:", error);
+        console.error("Error fetching samples:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchType();
-  }, [token, typeId]);
+    fetchsample();
+  }, [token, sampleId]);
 
   return {
     token,
     isLoading,
     setIsLoading,
-    type,
-    setType,
+    sample,
+    setSample,
   };
 };
 
-export const useCreateType = () => {
+export const useCreateSample = () => {
   const { token, role } = useContext(LoginContext);
-  // States
-  const [fields, dispatchFields] = useReducer(fieldsReducer, {
+const [fields, dispatchFields] = useReducer(fieldsReducer, {
     title: { value: "", isValid: null, error: null },
-    StandardValue: { value: "", isValid: null, error: null },
-    unite: { value: "", isValid: null, error: null },
-    description: { value: "", isValid: true, error: null }, // ajouté
   });
-  const [formIsValid, setFormIsValid] = useState(false);
-
-  // Validation effect
-  useEffect(() => {
+    const [formIsValid, setFormIsValid] = useState(false);
+ useEffect(() => {
     const timer = setTimeout(() => {
-      setFormIsValid(
-        fields.title.isValid &&
-          fields.StandardValue.isValid &&
-          fields.unite.isValid
-      );
+     setFormIsValid(fields.title.isValid);
     }, 500);
 
     return () => clearTimeout(timer);
   }, [fields]);
-
-  // Handlers
-  const handleFieldChange = (field) => (e) => {
+const handleFieldChange = (field) => (e) => {
     dispatchFields({ type: "UPDATE_FIELD", field, payload: e.target.value });
   };
 
@@ -157,21 +141,18 @@ export const useCreateType = () => {
     }
 
     const data = {
-      unite: fields.unite.value,
       title: fields.title.value,
-      StandardValue: fields.StandardValue.value,
-      description: fields.description.value,
     };
 
     try {
-      const response = await CreateNewType(token, data);
+      const response = await CreateNewSample(token, data);
       if (response.status !== 200) {
         console.log("errreur", response);
         setBackendError(response?.data?.error || "Une erreur est survenue");
       } else {
         setBackendError(null); // reset si succès
         setSuccessMessage("Création réussie !");
-        console.log("Type créé:", response.data);
+        console.log("sample créé:", response.data);
       }
     } catch (err) {
       // Pour les erreurs réseau ou inattendues
@@ -180,7 +161,8 @@ export const useCreateType = () => {
     }
   };
   return {
-    fields,
+ 
+     fields,
     dispatchFields,
     formIsValid,
     setFormIsValid,

@@ -33,6 +33,11 @@ export const usePagination = (data = [], itemsPerPage = 10, dataType = "user") =
             item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.id?.toString().includes(searchTerm);
         }
+        else if (dataType === "sample") {
+          matchesSearch = 
+            item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.id?.toString().includes(searchTerm);
+        }
       }
       
       // Filtre selon le type de données
@@ -43,6 +48,9 @@ export const usePagination = (data = [], itemsPerPage = 10, dataType = "user") =
         } else if (dataType === "request") {
           matchesFilter = item.status === selectedFilter;
         } else if (dataType === "type") {
+          matchesFilter = item.status === selectedFilter;
+        }
+         else if (dataType === "sample") {
           matchesFilter = item.status === selectedFilter;
         }
       }

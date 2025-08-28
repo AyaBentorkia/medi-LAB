@@ -11,7 +11,7 @@ const AppError = require("../utils/AppError");
 const CreateAnalysisType = async (req, res) => {
     try{
         const analysisType = await AnalysisTypeService.createAnalysisType(req.body);
-        return res.status(201).json({ message: 'Type d\'analyse créé avec succès', analysisType });
+        return res.status(200).json({ message: 'Type d\'analyse créé avec succès', analysisType });
     }
     catch(error){
         console.log(error)

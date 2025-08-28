@@ -12,6 +12,25 @@ export const LoginContext = createContext({
 });
 export default LoginContext;
 export const Context = ({children}) => {
+  
+  function parseJwt(token) {
+  try {
+   const realToken = token.startsWith("Bearer ") ? token.split(" ")[1] : token;
+        const base64Url = realToken.split('.')[1]; 
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    console.error("Invalid token:", e);
+    return null;
+  }
+}
+
 
     const [token,setToken]=useState("");
     const [role,setRole]=useState("");
@@ -20,7 +39,16 @@ export const Context = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
      useEffect(()=>{
     const storedToken = localStorage.getItem("token");
-    const storedRole = localStorage.getItem("role");
+    let decodedToken="";
+    if(storedToken) {
+  try {
+    decodedToken = parseJwt(storedToken);
+    console.log("Token décodé:", decodedToken);
+  } catch (error) {
+    console.error("Token invalide:", error);
+  }
+}
+    const storedRole = decodedToken?.userInfo?.role;
     const storedFirstname = localStorage.getItem("firstname");
     const storedLastname = localStorage.getItem("lastname");
     
@@ -59,7 +87,7 @@ export const Context = ({children}) => {
   };
 
     return (
-        <LoginContext.Provider value={{token,role,firstname,lastname,loginHandler,logoutHandler,isLoggedIn}}>
+        <LoginContext.Provider value={{token,role,firstname,lastname,loginHandler,logoutHandler,isLoggedIn,parseJwt}}>
             {children}
         </LoginContext.Provider>
   )

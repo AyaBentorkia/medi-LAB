@@ -28,13 +28,12 @@ class AnalysisTypeService {
      async createAnalysisType(data) {
             const { error } = ValidateAnalysisType(data);
             if (error) throw new AppError("Données d'entrée invalides", 400);
-            const {title,description,StandardValue,unite,price} = data;
+            const {title,description,StandardValue,unite} = data;
             const analysisType = await AnalysisType.create({
                 title,
                 description,
                 StandardValue,
                 unite,
-                price
             });
             return analysisType;
     }
@@ -61,14 +60,16 @@ class AnalysisTypeService {
     }
 
     // méthode pour mettre à jour un type d'analyse
-     async updateAnalysisType(id, data) {
-            if (!id) throw new AppError('ID est requis',400);
+     async updateAnalysisType(typeId, data) {
+            if (!typeId) throw new AppError('ID est requis',401);
             console.log(data)
-            const { error } = ValidateAnalysisUpdateType(data);
-            if (error) throw new AppError("Données d'entrée invalides", 400);
-            const analysisType = await AnalysisType.findByPk(id);
+            const {id,createdAt,updatedAt,price,...other}=data;
+            const { error } = ValidateAnalysisUpdateType(other);
+            console.log("error de validation : ",error)
+            if (error) throw new AppError(error?.details[0].message || 'erreur de validation',400);
+            const analysisType = await AnalysisType.findByPk(typeId);
             if (!analysisType) throw new AppError("Type d'analyse non trouvé", 404);
-            analysisType.set(data);
+            analysisType.set(other);
             await analysisType.save();
             return analysisType;
     }

@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/Admin/analysis-types";
+const API_URL = "http://localhost:5000/Admin/samples";
 
-export const GetAllTypes = async (token) => {
+export const GetAllSamples = async (token) => {
   const res = await axios.get(`${API_URL}`,
          {
           headers: { Authorization: `Bearer ${token}` },
@@ -11,22 +11,22 @@ export const GetAllTypes = async (token) => {
   return res;
 };
 
-export const GetTypeById = async (token,TypeId) => {
-  const res = await axios.get(`${API_URL}/${TypeId}`,
+export const GetSampleById = async (token,SampleId) => {
+  const res = await axios.get(`${API_URL}/${SampleId}`,
          {
           headers: { Authorization: `Bearer ${token}` },
         });
   return res;
 };
-export const UpdateType = async (token,TypeId,data) => {
-  const res = await axios.put(`${API_URL}/${TypeId}`,data,
+export const UpdateSample = async (token,SampleId,data) => {
+  const res = await axios.patch(`${API_URL}/${SampleId}`,data,
          {
           headers: { Authorization: `Bearer ${token}` },
         });
   return res;
 };
 
-export const CreateNewType = async (token,data)=>{
+export const CreateNewSample = async (token,data)=>{
    const res = await axios.post(`${API_URL}`,
         data,
         {
@@ -38,8 +38,8 @@ export const CreateNewType = async (token,data)=>{
       );
   return res;
 }
-export const DeleteType = async (token,typeId) => {
-  const res = await axios.delete(`${API_URL}/${typeId}`,
+export const DeleteSample = async (token,SampleId) => {
+  const res = await axios.delete(`${API_URL}/${SampleId}`,
          {
           headers: { Authorization: `Bearer ${token}` },
         });
