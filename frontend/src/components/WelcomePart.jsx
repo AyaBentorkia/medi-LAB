@@ -48,9 +48,9 @@ const WelcomePart = () => {
         </div>
         <div className="hero-buttons">
           <button className="btn-primary" onClick={scrollToContact}>
-            Prendre Rendez-vous <ArrowRight size={18} />
+            Commencez maintenant <ArrowRight size={18} />
           </button>
-          <button
+          {/* <button
             className="btn-outline"
             onClick={() => {
               const section = document.getElementById("services");
@@ -58,7 +58,7 @@ const WelcomePart = () => {
             }}
           >
             Nos Services
-          </button>
+          </button> */}
         </div>
       </div>
     </section>

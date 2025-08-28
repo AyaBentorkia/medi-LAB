@@ -114,12 +114,12 @@ const ProfileModal = ({patientId,onClose,token}) => {
 
             <div className="form-add-result-group">
               <label><MapPin size={14} className="icon-add-result" /> Adresse</label>
-              <input type="text" value={userData?.address || ""} disabled />
+              <input type="text" value={userData?.adress || ""} disabled />
             </div>
 
             <div className="form-add-result-group">
               <label><MapPin size={14} className="icon-add-result" /> Gouvernorat</label>
-              <input type="text" value={userData?.governorate || ""} disabled />
+              <input type="text" value={userData?.city || ""} disabled />
             </div>
           </div>
         </div>

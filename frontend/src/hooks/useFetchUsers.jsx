@@ -4,7 +4,7 @@ import {  GetAllUsers } from "../apis/UsersApi";
 import { ROLES } from "../Constants/Roles";
 
 
-export const useFetchUsers = ()=>{
+export const useFetchUsers = (statusChanged=false)=>{
       const [users, setUsers] = useState([])
       const {token,role} = useContext(LoginContext);
       const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +17,7 @@ export const useFetchUsers = ()=>{
           const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
           const now = new Date().getTime();
           //verification
-          if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000) {
+          if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000 && statusChanged) {
             setUsers(JSON.parse(cachedData));
             setIsLoading(false);
             return;

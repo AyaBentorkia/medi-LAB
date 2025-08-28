@@ -43,7 +43,7 @@ const ReportRow= React.memo(({
                         <Send size={18} /> 
                       </button>
                       <button 
-                        className="btn-icon-add-file" 
+                        className="btn-icon-delete-file" 
                       onClick={() => onDelete(report)} >
                         <Trash size={18} /> 
                       </button>

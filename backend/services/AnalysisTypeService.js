@@ -41,18 +41,13 @@ class AnalysisTypeService {
 
     // méthode pour récupérer tous les types d'analyse
      async getAnalysisTypes(query) {
-        const { title,page,limit } = query;
-             const pageQ = parseInt(page) || 1; // Page actuelle
-        const limitQ = parseInt(limit) || 5;
-        const skip = (pageQ - 1) * limitQ;
+        const { title} = query;
         let filtre={};
         if (title) filtre.title = { [Op.like]: `%${title}%` };
         const total = await AnalysisType.count({ where: filtre });
 
         const analysisTypes = await AnalysisType.findAll({
             where: filtre,
-            limit: limitQ,
-            offset: skip
         });
         return { total, analysisTypes };
     }

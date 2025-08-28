@@ -24,7 +24,7 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Logo */}
         <div className="logo" onClick={() => navigate("/")}>
-          <img src={labLogo} alt="Laboratoire Médical" className="logo-img" />
+          {/* <img src={labLogo} alt="Laboratoire Médical" className="logo-img" /> */}
           <div className="logo-text">
             <h1>LabMédical</h1>
             <p>Excellence & Précision</p>
@@ -35,7 +35,7 @@ const Navbar = () => {
         <nav className={`nav ${isMenuOpen ? "open" : ""}`}>
           <button onClick={() => scrollToSection("hero")}>Accueil</button>
           <button onClick={() => scrollToSection("about")}>À Propos</button>
-          <button onClick={() => scrollToSection("services")}>Services</button>
+          {/* <button onClick={() => scrollToSection("services")}>Services</button> */}
           <button onClick={() => scrollToSection("contact")}>Contact</button>
         </nav>
 

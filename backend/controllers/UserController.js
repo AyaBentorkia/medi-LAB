@@ -83,9 +83,10 @@ const UpdateUser= async (req, res) => {
 const ManageUserStatus = async (req, res) => {
     try {
         const userId = req.params.id;
-        const { status } = req.body;
-        const response = await UserService.manageUserStatus(userId, status);
-        return res.status(200).json({ message: response.message });
+        console.log("userId : ",userId);
+        console.log("status",req.body.status);
+        const response = await UserService.manageUserStatus(userId, req.body.status);
+        return res.status(200).json({ message: response.message,status:response.status });
     } catch (error) {
         if (error instanceof AppError) {
             return res.status(error.statusCode).json({ error: error.message });

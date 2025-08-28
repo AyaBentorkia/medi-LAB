@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { GetAllReports } from "../apis/AnalysisReportApi";
+import { GetAllReports, GetReportByRequestID } from "../apis/AnalysisReportApi";
 import LoginContext from "../context/LoginContext";
 
 
@@ -44,5 +44,39 @@ export const useFetchReports = ()=>{
             role,token,
             isLoading,setIsLoading,
             reports,setReports,
+        }
+}
+
+//get report by resuest id to verify if the request's report has been done
+
+export const useGetReportByRequestId = (requestId)=>{
+    const {token}=useContext(LoginContext);
+    const [isLoading, setIsLoading] = useState(true);
+    const [reportId, setReportId] = useState({});
+
+     useEffect(()=>{
+            const fetchReport= async()=>{
+           
+          try {
+            setIsLoading(true);
+            const response = await GetReportByRequestID(token,requestId);
+            if(response.status ===200){
+// console.log("reports : ",response.data.report);
+            setReportId(response?.data?.report?.id);
+            }
+          } catch (error) {
+            console.error("Error fetching patients:", error);
+         
+          } finally {
+            setIsLoading(false);
+          }
+        }
+        fetchReport();
+        },[token])
+
+        return {
+            token,
+            isLoading,setIsLoading,
+            reportId,setReportId,
         }
 }

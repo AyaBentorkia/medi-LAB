@@ -354,3 +354,70 @@ const UsersList = () => {
 
 export default UsersList
 /**************************************** */
+/*
+import { useContext, useEffect, useState } from "react";
+import LoginContext from "../context/LoginContext";
+import { GetProfile, UpdateProfile } from "../apis/UsersApi";
+export const useFetchProfile = () => {
+  const token = localStorage.getItem("token");
+  const [userData, setUserData] = useState({});
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [patient, setPatient] = useState();
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await GetProfile(token);
+        if (response.status === 200) {
+          setUserData(response.data.user);
+        } else {
+          throw new Error("Réponse inattendue");
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+        setError(error.message);
+      }
+    };
+    fetchProfile();
+  }, [token]);
+
+  const handleSave = async (updatedData) => {
+    try {
+      // to exclude the password if its empty
+        const dataToSend = { ...updatedData };
+        if (dataToSend.password.length===0) {
+          delete dataToSend.password;
+        }
+        console.log("dataTosend : ",dataToSend);
+      const response = await UpdateProfile(token, dataToSend);
+      if (response.status === 200) {
+        
+
+        // Envoyer dataToSend à l'API
+        setUserData(response.data.updatedUser);
+      } else {
+        throw new Error("Réponse inattendue");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setError(error.message);
+    } finally {
+      setIsModalOpen(false);
+    }
+  };
+
+  return {
+    token,
+    userData,
+    setUserData,
+    error,
+    setError,
+    isModalOpen,
+    setIsModalOpen,
+    patient,
+    setPatient,
+    handleSave,
+  };
+};
+*/

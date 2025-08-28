@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+z-index: 10000; 
   padding: 20px;
 }
 
@@ -112,7 +112,7 @@
 }
 
 .analyses-add-result-section {
-  border-left: 4px solid #f59e0b;
+  border-left: 4px solid #0e8052;
 }
 
 /* Section Titles */

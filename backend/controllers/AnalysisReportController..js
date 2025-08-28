@@ -62,6 +62,22 @@ const getReportById = async (req, res, next) => {
   }
 };
 
+const GetReportByRequestId = async (req, res, next) => {
+  try {
+    const report = await reportService.getReportByRequestId(req.params.id);
+    return res.status(200).json({
+      success: true,
+      report
+    });
+  } catch (error) {
+         if (error instanceof AppError) {
+        return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ message: 'Server Error' });
+    
+  }
+};
+
 const getReportByPatient = async (req, res, next) => {
   try {
     const {reports,total} = await reportService.getPatientReports(req.user.id,req.query);
@@ -98,10 +114,10 @@ const downloadReport = async (req, res, next) => {
   }
 };
 /**-----------------------------------------------
- * @desc    Profile Photo Upload
- * @route   /api/users/profile/profile-photo-upload
+ * @desc    Report Upload
+ * @route   
  * @method  POST
- * @access  private (only logged in user)
+ * @access  private (only Labo tech)
  ------------------------------------------------*/
  const ReportUploadCtrl = async (req, res) => {
     try{
@@ -120,7 +136,6 @@ const downloadReport = async (req, res, next) => {
       const result = await cloudinaryUploadReport(FilePath);
 
       // 4. Get the user from DB
-      // console.log("ici a 4 req.user.id :",req.user.id);
       const analysisRequest= await AnalysisRequest.findByPk(req.params.id,
         {
           include:[
@@ -134,7 +149,6 @@ const downloadReport = async (req, res, next) => {
 const patient = analysisRequest.patient?.id;
       console.log("user : ",patient);
       let analysisReport= await AnalysisReport.findOne({where:{AnalysisRequestId:analysisRequest.id}})
-      // console.log("user cv  : ",user.cv);
 
     
       // 5. Delete the old profile photo if exist
@@ -215,5 +229,6 @@ module.exports = {
   ReportUploadCtrl,
   getReportByPatient,
   DeleteReport,
+  GetReportByRequestId
   
 };

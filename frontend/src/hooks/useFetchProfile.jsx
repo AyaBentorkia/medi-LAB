@@ -1,10 +1,10 @@
   
 import { useContext, useEffect, useState } from 'react';
 import LoginContext from '../context/LoginContext';
-import { GetProfile, UpdateProfile } from '../apis/UsersApi';
+import { GetProfile, UpdateProfile, UpdateUserStatus } from '../apis/UsersApi';
   export const useFetchProfile= ()=>{
 
-  const {token} = useContext(LoginContext) ;
+  const token = localStorage.getItem("token")
   const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,6 +31,7 @@ import { GetProfile, UpdateProfile } from '../apis/UsersApi';
     try {
       const response = await UpdateProfile(token,updatedData);
       if (response.status === 200) {
+        console.log(updatedData)
         setUserData(response.data.updatedUser);
       } else {
         throw new Error('Réponse inattendue');
@@ -53,3 +54,25 @@ import { GetProfile, UpdateProfile } from '../apis/UsersApi';
     handleSave
   }
     }
+//UpdateUserStatus by admin
+
+export const ManageUserStatus= (userId,updatedStatus)=>{
+    const [error, setError] = useState(null);
+  const [status,setStatus]=useState("");
+  const handleUpdateUserStatus= async ()=>{
+   try {
+      const response = await UpdateUserStatus(token,userId,updatedStatus);
+      if (response.status === 200) {
+        setStatus(response.data.status);
+      } else {
+        throw new Error('Réponse inattendue');
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      setError(error.message);
+    }
+  };
+  return {
+    status,handleUpdateUserStatus,error,
+  }
+}

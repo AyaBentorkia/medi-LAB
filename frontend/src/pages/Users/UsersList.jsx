@@ -1,18 +1,20 @@
 import React, { useEffect, useState, useMemo } from "react"
 import { Eye } from "lucide-react"
 import axios from "axios";
-import { GetAllUsers } from "../../apis/UsersApi";
+import { GetAllUsers, UpdateUserStatus } from "../../apis/UsersApi";
 import { useFilterStatus, useSearchFilter } from "../../hooks/useSerachFilter";
 import { ROLES } from "../../Constants/Roles";
 import { useFetchUsers } from "../../hooks/useFetchUsers";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../../components/Pagination";
+import { ManageUserStatus } from "../../hooks/useFetchProfile";
 const ProfileModal = React.lazy(() => import('../Profile/ProfileModal'));
 const AddUserModal = React.lazy(()=> import ('./AddUserModal'))
 
   const UserRow = React.memo(({ 
     user, 
-    onViewUser 
+    onViewUser ,
+    onUpdateStatus
   }) => {
     return (
       <tr >
@@ -30,9 +32,20 @@ const AddUserModal = React.lazy(()=> import ('./AddUserModal'))
           </div>
         </td>
         <td>{user?.birth_date}</td>
-        <td>{user?.phoneNumber}</td>
+        {/* <td>{user?.phoneNumber}</td> */}
         <td>{user?.CIN}</td>
         <td>{user?.role}</td>
+        <td>
+          <select
+                      value={user?.status}
+                      onChange={(e) =>
+                        onUpdateStatus(user?.id, e.target.value)
+                      }
+                    >
+                      <option value="Activé">Activé</option>
+                      <option value="Desactivé">Desactivé</option>
+                    </select>
+        </td>
         <td>
           <div className="actions">
             <button 
@@ -50,10 +63,11 @@ const UsersList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
       const [isModalAddUserOpen, setIsModalAddUserOpen] = useState(false);
+      const [statusChanged,setStatusChanged]=useState(false);
      const {
             users,setUsers,
             token,isLoading,setIsLoading,role
-          }= useFetchUsers();
+          }= useFetchUsers(statusChanged);
     
    const {
     data: filteredUsers,
@@ -81,6 +95,28 @@ const UsersList = () => {
       setIsModalOpen(false);
       setIsModalAddUserOpen(true);
     },[])
+
+    const handleUpdateStatus= React.useCallback(async (userId,status)=>{
+      try {
+        
+           const response = await UpdateUserStatus(token,userId,status);
+           if (response.status === 200) {
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.id === userId 
+            ? { ...user, status: status } 
+            : user
+        )
+        
+      );
+      setStatusChanged(true);
+      console.log("Statut mis à jour avec succes");
+    } 
+  }
+    catch (error) {
+      console.error("Error updating profile:", error.message);
+  }
+}, [setUsers]);
   return (
      <div className="patients-list-container">
           {/* Header */}
@@ -160,6 +196,7 @@ const UsersList = () => {
                       key={user?.id}
                       user={user}
                       onViewUser={handleViewUser}
+                      onUpdateStatus={handleUpdateStatus}
                     />
                   ))
                 )}

@@ -72,18 +72,24 @@ class UserService {
     
 
     async updateUser(userId, userData) {
-            const {firstname,lastname,password,phoneNumber,adress,city,birth_date,gender,role,CIN}=userData;
+            const {firstname,lastname,phoneNumber,adress,city,birth_date,gender,role,CIN}=userData;
+            const {password,...otherData}=userData;
             const {error}= ValidateUpdateUser({firstname,lastname,password,phoneNumber,adress,city,birth_date,gender,role,CIN});
              if(error){
             throw new AppError(error.details[0].message,400);
             }
-            if(userData.password) {
-                userData.password =await bcrypt.hash(userData.password,10);
-            }
-            // const {firstname,lastname,password,phoneNumber,adress,city,birth_date,gender,role}=userData;
+
             const user= await User.findByPk(userId);
             if(!user) throw new AppError(404, 'User non trouvé');
-            user.set(userData);
+
+             if(userData.password && !userData.password.startsWith('$2b$')) {
+                userData.password =await bcrypt.hash(userData.password,10);
+                user.set(userData);
+            }
+            else {
+                user.set(otherData);
+            }
+            
             const updatedUser= await user.save();
             return updatedUser;
             // const [updated] = await User.update({
@@ -102,16 +108,13 @@ class UserService {
         
     }
     async manageUserStatus(userId, status) {
-        try {
             if(!userId || !status) throw new AppError(400, 'User ID et status sont requis');
             const user = await User.findByPk(userId);
             if(!user) throw new AppError(404, 'User non trouvé');
             user.status = status;
             await user.save();
-            return { message: `User status mis à jour en ${status}` };
-        } catch (error) {
-            throw new Error('Server error ');
-        }
+            return { message: `User status mis à jour en ${status}`,status };
+        
     }
 
     async resetPassword(email, newPassword) {

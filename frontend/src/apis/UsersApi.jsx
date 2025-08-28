@@ -50,3 +50,12 @@ export const CreateUser = async (token,userData)=>{
       );
   return res;
 }
+export const UpdateUserStatus = async (token,userId,status) => {
+  const res = await axios.patch(`http://localhost:5000/Admin/users/${userId}`,{status},
+         {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("userID: ",userId)
+                console.log("status : ",status)
+  return res;
+};

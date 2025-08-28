@@ -30,6 +30,7 @@ const {GetSamples,
     DeleteSample,
     CreateSample}= require('../controllers/SampleController');
 const { GetAnalysisRequestById } = require('../controllers/AnalysisRequestController');
+const { getAllReports, getReportById } = require('../controllers/AnalysisReportController.');
 
 // Routes for user management
 router.get('/users/:id', verifyAdmin, GetUserById);
@@ -54,6 +55,10 @@ router.patch('/samples/:id', verifyAdmin, UpdateSample);
 router.delete('/samples/:id', verifyAdmin, DeleteSample);
 
 router.get('/analysis-requests/:id', verifyAdmin, GetAnalysisRequestById);
+
+//reports
+router.get('/reports', verifyAdmin, getAllReports);
+router.get('/reports/:id', verifyAdmin, getReportById);
 
 
 module.exports = router;

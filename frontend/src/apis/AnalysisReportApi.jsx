@@ -13,9 +13,18 @@ export const GetAllReports = async (token,role) => {
           }
         );
         }
-        else{
+        else if(role===ROLES.ANALYST){
           res= await axios.get(
           "http://localhost:5000/LabTechnician/reports",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+            // timeout: 5000,
+          }
+        );
+        }
+        else {
+res= await axios.get(
+          "http://localhost:5000/Admin/reports",
           {
             headers: { Authorization: `Bearer ${token}` },
             // timeout: 5000,
@@ -29,6 +38,14 @@ export const SendReportByMail= async (token,reportId)=>{
  const res = await axios.post(
           `http://localhost:5000/LabTechnician/reports/send/${reportId}`,{},
         { headers: { Authorization: `Bearer ${token}` } }
+      );
+  return res;
+}
+
+export const GetReportByRequestID = async(token,requestId)=>{
+  const res= await axios.get(
+    `http://localhost:5000/LabTechnician/repports/analysis-request/${requestId}`,
+{ headers: { Authorization: `Bearer ${token}` } }
       );
   return res;
 }

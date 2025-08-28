@@ -170,7 +170,7 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
     // Sauvegarder dans la table
     const report = await AnalysisReport.create({
       AnalysisRequestId: requestId,
-      uploadedBy: technician, // attention: si technician = req.user.id ou un objet → adapter
+      uploadedBy: technician, 
       fileName,
       filePath,
       fileUrl: `/uploads/reports/${fileName}`
@@ -242,6 +242,19 @@ doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || '
       throw new AppError('Erreur lors de la récupération du rapport: ' + error.message, 500);
     }
   }
+  
+   // Récupérer un rapport par l'ID de demande
+  async getReportByRequestId(id) {
+    try {
+      const report = await AnalysisReport.findOne({where:{AnalysisRequestId:id}});
+
+      return report;
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError('Erreur lors de la récupération du rapport: ' + error.message, 500);
+    }
+  }
+  
 
   // Télécharger un rapport (backend)
   async downloadReport(id) {

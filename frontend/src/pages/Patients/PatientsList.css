@@ -256,7 +256,7 @@
   gap: 8px;
 }
 
-.btn-icon, .btn-icon-add-file {
+.btn-icon, .btn-icon-add-file,.btn-icon-delete-file {
   width: 32px;
   height: 32px;
   border: none;
@@ -275,8 +275,11 @@
     color: var(--btn-blue-hover);
 
 }
+.btn-icon-delete-file{
+  color: #a60202;
+}
 
-.btn-icon:hover, .btn-icon-add-file:hover {
+.btn-icon:hover, .btn-icon-add-file:hover, .btn-icon-delete-file:hover {
   background: var(--secondary-color);
   color: var(--primary-color);
 }
@@ -384,6 +387,17 @@
 .btn-danger:hover {
   background: #c82333;
   border-color: #c82333;
+}
+.disabled-add-file-btn{
+  color: gray;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Responsive Design */

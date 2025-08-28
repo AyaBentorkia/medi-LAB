@@ -13,6 +13,8 @@ import PatientsList from './pages/Patients/PatientsList';
 import AnalysisReqList from './pages/AnalysisRequests/AnalysisReqList';
 import AnalysisReportsList from './pages/AnalysisReports/AnalysisReportsList';
 import UsersList from './pages/Users/UsersList';
+import Samples from './pages/Samples/Samples';
+import AnalysisTypes from './pages/AnalysisTypes/AnalysisTypes';
 
 function LayoutWithSidebar({ children }) {
   return (
@@ -43,6 +45,8 @@ function App() {
       <Route path="/rapports-d'analyse" element={<LayoutWithSidebar><AnalysisReportsList /></LayoutWithSidebar>} />
 
       <Route path='/utilisateurs' element={<LayoutWithSidebar><UsersList /></LayoutWithSidebar>} />
+      <Route path='/prelevements' element={<LayoutWithSidebar><Samples /></LayoutWithSidebar>} />
+      <Route path='/types' element={<LayoutWithSidebar><AnalysisTypes /></LayoutWithSidebar>} />
 
     </Routes>
     </>

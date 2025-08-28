@@ -1,18 +1,19 @@
 import { useState, useEffect, useContext } from "react"
 import "./Sidebar.css"
-import { LayoutDashboard, User, Users, FileText, LogOut,House, ChevronLeft, ChevronRight, Activity } from "lucide-react"
-import { NavLink, useNavigate } from "react-router"
+import { LayoutDashboard, User, Users, FileText, LogOut,House, ChevronLeft, ChevronRight, Activity, FlaskConical, TestTubes, FileCheck } from "lucide-react"
+import { NavLink, useLocation, useNavigate } from "react-router"
 import logo from '../assets/Lab-logo.png'
 import {LoginContext} from "../context/LoginContext";
 
 const Sidebar = () => {
-  const navigate= useNavigate()
+  const navigate= useNavigate();
+   const location = useLocation();
     const SecretaryMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
-    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyse" },
+    { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileCheck, path: "/demandes-d'analyse" },
   ]
   const PatientMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
@@ -26,20 +27,32 @@ const Sidebar = () => {
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "patients", label: "Patients", icon: Users, path: "/patients" },
     { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyse" },
-    { id: "rapports d'analyse", label: "Analyses", icon: FileText, path: "/rapports-d'analyse" },
+    { id: "rapports d'analyse", label: "Analyses", icon: FileCheck, path: "/rapports-d'analyse" },
   ]
     const AdminMenuItems = [
     { id: "accueil", label: "Accueil", icon: House, path: "/" },
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { id: "profile", label: "Profil", icon: User, path: "/profile" },
     { id: "utilisateurs", label: "Utilisateurs", icon: Users, path: "/utilisateurs" },
+    { id: "types de prelevement", label: "Types de prelevement", icon: FlaskConical , path: "/prelevements" },
+    { id: "types d'analyse", label: "Types d'analyse", icon: TestTubes, path: "/types" },
+     { id: "demandes d'analyses", label: "Demandes d'analyses", icon: FileText, path: "/demandes-d'analyse" },
+    { id: "rapports d'analyse", label: "Analyses", icon: FileCheck, path: "/rapports-d'analyse" },
+  
   ]
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [activeItem, setActiveItem] = useState("dashboard")
   const [menuItems, setMenuItems] = useState(SecretaryMenuItems)
   const {role,token,logoutHandler}= useContext(LoginContext);
-  // const role= localStorage.getItem("role");
-
+  
+  useEffect(() => {
+    // Trouver l'item correspondant au chemin actuel
+    const currentItem = menuItems.find(item => item.path === location.pathname)
+    if (currentItem) {
+      setActiveItem(currentItem.id)
+    }
+  }, [location.pathname, menuItems])
+  
   useEffect(() => {
     switch (role) {
       case "Admin":
@@ -67,9 +80,13 @@ const Sidebar = () => {
       <div className="sidebar-header">
         <div className="logo-container">
           {!isCollapsed && (
+            // <div className="logo-text">
+            //   <img src={logo} alt="Logo" className="logo-image" />
+            // </div>
             <div className="logo-text">
-              <img src={logo} alt="Logo" className="logo-image" />
-            </div>
+            <h1>LabMédical</h1>
+            <p style={{color:"white",marginLeft:'5px'}}>Excellence & Précision</p>
+          </div>
           )}
         </div>
 

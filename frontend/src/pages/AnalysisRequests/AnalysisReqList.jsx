@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "../Patients/PatientsList.css";
-import { Eye, FilePlus } from "lucide-react";
+import { Eye, FilePlus, Trash } from "lucide-react";
 import { GetAnalysisReqList, UpdateRequestStatus } from "../../apis/AnalysisRequestApi";
 import { ROLES } from "../../Constants/Roles";
 import { useFetchRequests } from "../../hooks/useFetchRequests";
 import { useFilterStatus, useSearchFilter } from "../../hooks/useSerachFilter";
 import Pagination from "../../components/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { useGetReportByRequestId } from "../../hooks/useFetchReports";
 
 const AddAnalysisReqModal = React.lazy(() => import("./AddAnalysisReqModal"));
 const AnalysisReqModal = React.lazy(() => import("./AnalysisReqModal"));
@@ -20,6 +21,7 @@ const AnalysisReqRow= React.memo(({
   onViewRequest,
   onAddResult,
   onAddRequest,
+  verifyReportSubmitted,
 
 }) => {
   return (
@@ -67,7 +69,8 @@ const AnalysisReqRow= React.memo(({
                       <Eye size={18} />
                     </button>
                     {role === ROLES.ANALYST ? (
-                      <button className="btn-icon-add-file">
+                      
+                      <button className={`${verifyReportSubmitted(request?.id)} `}>
                         <FilePlus
                         size={18}
                           onClick={() => {
@@ -77,7 +80,13 @@ const AnalysisReqRow= React.memo(({
                           }}
                     />
                       </button>
-                    ) : null}
+                    ) : (
+                       <button className="btn-icon-delete-file">
+                        <Trash
+                        size={18}
+                    />
+                      </button>
+                    )}
                   </div>
                 </td>
               </tr>
@@ -110,7 +119,18 @@ const {
       setFilter,
       hasNextPage,
       hasPrevPage
-    } = usePagination(requests, 10);
+    } = usePagination(requests, 10,'request');
+
+    //verifier si le rapport est soumis ou non
+    const verifyReportSubmitted = React.useCallback ((requestId)=>{
+      const {reportId}= useGetReportByRequestId(requestId);
+      let classname='btn-icon-add-file';
+      if(reportId){
+        classname= 'disabled-add-file-btn'
+      }
+      return classname;
+    },[])
+      
     // Fonction pour ouvrir la visualisation d'une demande specifique
   const handleViewRequest = React.useCallback((requestId) => {
     console.log("requestId : ",requestId)
@@ -241,6 +261,7 @@ const {
                 onAddResult={() => handleAddResult(request.id)}
                 handleStatusChange={handleStatusChange}
                 getStatusBadge={getStatusBadge}
+                verifyReportSubmitted={()=>verifyReportSubmitted(request.id)}
               />
               ))
             )}
