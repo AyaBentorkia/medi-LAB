@@ -43,6 +43,7 @@ const AnalysisReqRow= React.memo(({
                   {" "}
                   {role === ROLES.ANALYST ? (
                     <select
+                    className="select-manage-status"
                       value={request?.status}
                       onChange={(e) =>
                         handleStatusChange(request?.id, e.target.value)
@@ -51,6 +52,7 @@ const AnalysisReqRow= React.memo(({
                       <option value="En attente">En attente</option>
                       <option value="En cours">En cours</option>
                       <option value="Terminé">Terminé</option>
+                      <option value="Annulé">Annulé</option>
                     </select>
                   ) : (
                     getStatusBadge(request?.status)
@@ -81,11 +83,7 @@ const AnalysisReqRow= React.memo(({
                     />
                       </button>
                     ) : (
-                       <button className="btn-icon-delete-file">
-                        <Trash
-                        size={18}
-                    />
-                      </button>
+                       null
                     )}
                   </div>
                 </td>
@@ -177,6 +175,7 @@ const {
       "Terminé": { label: "Terminé", className: "status-active" },
       "En attente": { label: "En attente", className: "status-pending" },
       "En cours": { label: "En cours", className: "status-inactive" },
+      "Annulé": { label: "Annulé", className: "status-inactive" },
     };
 
     const config = statusConfig[status] || statusConfig.active;
@@ -222,6 +221,7 @@ const {
             <option value="Terminé">Terminé</option>
             <option value="En attente">En attente</option>
             <option value="En cours">En cours</option>
+            <option value="Annulé">Annulé</option>
           </select>
         </div>
         

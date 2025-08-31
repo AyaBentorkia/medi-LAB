@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DashboardPatient = () => {
+const DashboardLayout = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const DashboardPatient = () => {
   )
 }
 
-export default DashboardPatient
+export default DashboardLayout

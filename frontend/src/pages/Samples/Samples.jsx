@@ -22,18 +22,18 @@ const SampleRow = React.memo(({
             </div>
           </div>
         </td>
-        <td>{sample?.createdAt}</td>
+        <td>{sample?.createdAt.split("T")[0]}</td>
         <td>
           <div className="actions">
           
              <button 
-              className="btn-icon" 
+              className="btn-icon-add-file" 
               onClick={() => onUpdateSample(sample)}
             >
               <Pencil size={18} /> 
             </button>
              <button 
-              className="btn-icon" 
+              className="btn-icon-delete-file" 
             >
               <Trash size={18} /> 
             </button>

@@ -65,7 +65,7 @@ const ReportActionModal = ({
         return (
           <div className="form-add-result-section" style={{ borderLeft: "4px solid #dc2626" }}>
             <h3 className="section-add-result-title">
-              <Trash2 size={18} className="icon-add-result" />
+              <Trash2 size={18} className="btn-icon-delete-file" />
               Supprimer le rapport
             </h3>
             <p>Êtes-vous sûr de vouloir supprimer ce rapport ? Cette action est irréversible.</p>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Mail, Phone, MapPin, Calendar, X } from 'lucide-react';
 import { useCreateUser } from '../../hooks/useCreateUser';
+import "../AnalysisResults/AddResultModal.css"
 import { ROLES } from '../../Constants/Roles';
 
 

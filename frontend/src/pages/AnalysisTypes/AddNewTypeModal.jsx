@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { User, Mail, Phone, MapPin, Calendar, X } from 'lucide-react';
+import "../AnalysisResults/AddResultModal.css"
 import { CreateNewType } from '../../apis/AnalysisTypesApi';
 import { useCreateType } from '../../hooks/useTypes';
 

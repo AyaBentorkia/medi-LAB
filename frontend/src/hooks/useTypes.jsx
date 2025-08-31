@@ -122,7 +122,7 @@ export const useCreateType = () => {
     title: { value: "", isValid: null, error: null },
     StandardValue: { value: "", isValid: null, error: null },
     unite: { value: "", isValid: null, error: null },
-    description: { value: "", isValid: true, error: null }, // ajouté
+    description: { value: "", isValid: true, error: null }, 
   });
   const [formIsValid, setFormIsValid] = useState(false);
 
@@ -152,7 +152,7 @@ export const useCreateType = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!formIsValid) {
-      alert("Veuillez remplir correctement les champs !");
+      setBackendError("Veuillez remplir correctement les champs !");
       return;
     }
 
@@ -169,7 +169,7 @@ export const useCreateType = () => {
         console.log("errreur", response);
         setBackendError(response?.data?.error || "Une erreur est survenue");
       } else {
-        setBackendError(null); // reset si succès
+        setBackendError(null); 
         setSuccessMessage("Création réussie !");
         console.log("Type créé:", response.data);
       }

@@ -28,7 +28,5 @@ router.delete('/analysis-requests/:id', verifySecretaire, DeleteAnalysisRequest)
 
 router.get('/analysis-types', verifySecretaire, GetAnalysisTypes);
 router.get('/samples/:id', verifySecretaire, GetSampleById);
-
-
 router.get('/samples', verifySecretaire, GetSamples);
 module.exports = router;

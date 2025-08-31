@@ -1,5 +1,7 @@
 import React from 'react'
+import "../AnalysisResults/AddResultModal.css"
 import { fetchOneType } from '../../hooks/useTypes'
+import "../AnalysisRequests/AddAnalysisReqModal"
 import { X, Calendar, Clock, User, FileText, TestTube, Droplet } from "lucide-react"
 
 

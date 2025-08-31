@@ -36,7 +36,7 @@ const AddUserModal = React.lazy(()=> import ('./AddUserModal'))
         <td>{user?.CIN}</td>
         <td>{user?.role}</td>
         <td>
-          <select
+          <select     className="select-manage-status"
                       value={user?.status}
                       onChange={(e) =>
                         onUpdateStatus(user?.id, e.target.value)

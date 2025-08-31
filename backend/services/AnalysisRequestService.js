@@ -9,7 +9,7 @@ const NotificationService = require("./NotificationService");
 //ce fichier contient les services pour les demandes d'analyse
 function ValidateAnalysisRequest(obj){
        const schema=joi.object({
-           status:joi.string().valid('En attente', 'En cours', 'Terminé').default('En attente'),
+           status:joi.string().valid('En attente', 'En cours', 'Terminé','Annulé').default('En attente'),
            note:joi.string().optional(),
            samplingDate:joi.date().optional(),
            CIN:joi.string().required(),
@@ -19,6 +19,8 @@ function ValidateAnalysisRequest(obj){
 class AnalysisRequestService {
     // méthode pour créer une demande d'analyse
     async createAnalysisRequest(data,SecretaryId) {
+        console.log("secretaire Id : ",SecretaryId)
+        if(!SecretaryId) throw new AppError("Secretaire Id est requis",400);
             const {status,note,samplingDate,CIN,analysisTypes,samples}=data;
             const {error}=ValidateAnalysisRequest({status,note,samplingDate,CIN});
             if(error) throw new AppError(error.details[0].message,400);
@@ -124,7 +126,8 @@ class AnalysisRequestService {
         model: Sample,
         as: 'samples',
         attributes: ['id', 'title']
-      }]
+      }],
+       order: [['createdAt', 'DESC']]
             });
             return {analysisRequests, total};
         

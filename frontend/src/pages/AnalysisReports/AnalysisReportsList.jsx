@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 // import "../Patients/PatientsList.css";
 import {  Eye, Send, Trash } from "lucide-react";
-import { DeleteReport, SendReportByMail } from "../../apis/AnalysisReportApi";
+import {  SendReportByMail } from "../../apis/AnalysisReportApi";
 const ReportActionModal= React.lazy(()=> import("./ReportActionModal"));
 import { ROLES } from "../../Constants/Roles";
 import { useFetchReports } from "../../hooks/useFetchReports";
@@ -10,7 +10,7 @@ import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../../components/Pagination";
 
 const ReportRow= React.memo(({
-    report, onDelete, onSendEmail, role,
+    report, onSendEmail, role,
 })=>{
     return (
         <tr key={report?.id}>
@@ -42,11 +42,7 @@ const ReportRow= React.memo(({
                       onClick={() => onSendEmail(report, "send")} >
                         <Send size={18} /> 
                       </button>
-                      <button 
-                        className="btn-icon-delete-file" 
-                      onClick={() => onDelete(report)} >
-                        <Trash size={18} /> 
-                      </button>
+                      
                       </>
                       ):(
                         <></>
@@ -81,31 +77,7 @@ const {
     hasNextPage,
     hasPrevPage
   } = usePagination(reports, 10);
-//delete report
-   const handleDeleteReport = async () => {
-    try {
-      const response=await DeleteReport(token,selectedReport.id)
-       if(response.status!==200){
-      setMessage("Essayez plus tards")
-      return;
-    }
-
-  setMessage("Rapport envoyé avec succés")
-          setIsActionModalOpen(false);
-      // Mettre à jour la liste localement
-      setReports(reports.filter(r => r.id !== selectedReport.id));
-      setIsActionModalOpen(false);
-      
-      localStorage.removeItem('reports_data');
-      localStorage.removeItem('reports_data_timestamp');
-
-    } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
-    }
-    finally {
-        setIsLoading(false);
-      }
-    };
+  
      // Fonction pour ouvrir le modal d'action
   const handleAction = (report, type) => {
     setSelectedReport(report);
@@ -187,7 +159,6 @@ const {
                     key={report?.id} 
                     report={report}
                     onSendEmail={handleAction}
-                    onDelete={handleAction}
                     role={role}
                   />
                   ))
@@ -213,7 +184,6 @@ const {
             report={selectedReport}
             actionType={actionType}
             token={token}
-            handleDeleteReport={handleDeleteReport}
             handleSendReport={handleSendReport}
             message={message}
           />

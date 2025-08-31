@@ -26,7 +26,7 @@ const TypeRow = React.memo(({
         </td>
         <td>{type?.StandardValue}</td>
         {/* <td>{type?.phoneNumber}</td> */}
-        <td>{type?.createdAt}</td>
+        <td>{type?.createdAt.split("T")[0]}</td>
         <td>
           <div className="actions">
             <button 
@@ -36,13 +36,13 @@ const TypeRow = React.memo(({
               <Eye size={18} /> 
             </button>
              <button 
-              className="btn-icon" 
+              className="btn-icon-add-file" 
               onClick={() => onUpdateType(type)}
             >
               <Pencil size={18} /> 
             </button>
              <button 
-              className="btn-icon" 
+              className="btn-icon-delete-file" 
             >
               <Trash size={18} /> 
             </button>

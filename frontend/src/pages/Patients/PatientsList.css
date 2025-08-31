@@ -480,3 +480,30 @@ select:focus-visible {
 .patients-table tr:nth-child(1) { animation-delay: 0.1s; }
 .patients-table tr:nth-child(2) { animation-delay: 0.2s; }
 .patients-table tr:nth-child(3) { animation-delay: 0.3s; }
+/* Ajoute ceci dans ton fichier CSS UsersList.css ou global */
+.select-manage-status {
+  padding: 0.35rem 1.2rem 0.35rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #2563eb;
+  background: #f9fafb;
+  color: #2563eb;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(37,99,235,0.04);
+}
+
+.select-manage-status:focus {
+  border-color: #1d4ed8;
+  box-shadow: 0 0 0 2px #2563eb33;
+}
+
+.select-manage-status option {
+  color: #2563eb;
+  background: #fff;
+  font-weight: 500;
+  border: 1px solid #1d4ed8;
+}

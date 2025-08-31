@@ -20,7 +20,7 @@ const AnalysisRequest=Sequelize.define('AnalysisRequest',{
         onDelete: 'CASCADE',
     },
     status:{
-        type: DataTypes.ENUM('En attente', 'En cours', 'Terminé'),
+        type: DataTypes.ENUM('En attente', 'En cours', 'Terminé','Annulé'),
         allowNull: false,
         defaultValue: 'En attente',
     },

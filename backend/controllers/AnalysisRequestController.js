@@ -11,7 +11,7 @@ const {User} = require("../models");
 const CreateAnalysisRequest = async (req, res) => {
     try{
         const secretaryId = req.user.id;
-        const [analysisRequest,notification] = await AnalysisRequestService.createAnalysisRequest(req.body, secretaryId);
+        const {analysisRequest,notification} = await AnalysisRequestService.createAnalysisRequest(req.body, secretaryId);
         return res.status(200).json({ message: 'Demande d\'analyse créée avec succès', analysisRequest, notification });
     }
     catch(error){

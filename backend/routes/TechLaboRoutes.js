@@ -22,6 +22,7 @@ const { createReport,
 GetReportByRequestId,} = require('../controllers/AnalysisReportController.');
 const ReportUpload= require("../middleware/FileUpload");
 const { SendAnalysisReportEmail } = require('../controllers/EmailController');
+const { getAllNotifications } = require('../controllers/NotificationController');
 
 // Routes for analysis-request management
 router.get('/analysis-requests/:id', verifyTechnicienLabo, GetAnalysisRequestById);
@@ -45,4 +46,6 @@ router.get('/repports/analysis-request/:id', verifyTechnicienLabo, GetReportByRe
 //Mail
 router.post('/reports/send/:id',verifyTechnicienLabo,SendAnalysisReportEmail);
 
+//notif
+router.get('/notifications',verifyTechnicienLabo,getAllNotifications);
 module.exports = router;
