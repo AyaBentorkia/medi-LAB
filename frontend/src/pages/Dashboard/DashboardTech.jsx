@@ -33,10 +33,10 @@ const stats = [
 requests.forEach(req => {
   const date = new Date(req.createdAt); 
   const dayIndex = date.getDay();
-  console.log("day index : ",dayIndex) 
+  // console.log("day index : ",dayIndex) 
   barData[dayIndex].analyses += 1;
 });
-console.log(barData);
+// console.log(barData);
 
 const sorted = [...requests].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 const lastThree = sorted.slice(0, 3);
@@ -44,13 +44,14 @@ const recentAnalyses = lastThree.map(req => ({
   id: req.id,
   patient: `${req.patient.firstname} ${req.patient.lastname}`,
   status: req.status,
-  date: new Date(req.createdAt).toISOString().split("T")[0] // format YYYY-MM-DD
+  date: new Date(req.createdAt).toISOString().split("T")[0] 
 }));
 
 // get notifs
 const [showNotif, setShowNotif] = React.useState(false);
-const { notifs,setNotifs}= useFetchNotif();
-const unreadCount = notifs.filter(n => !n.isRead).length;
+const { notifs,
+    isRead, markAsRead,
+    unreadCount}= useFetchNotif();
 
 
   return (
@@ -59,8 +60,11 @@ const unreadCount = notifs.filter(n => !n.isRead).length;
      <div className="dashboard-topbar">
   <h2 className="dashboard-title">Dashboard Technicien</h2>
   <div style={{ position: "relative" }}>
-    <button className="dashboard-notif-btn" onClick={() => setShowNotif(v => !v)}>
+    <button className="dashboard-notif-btn" onClick={() => {setShowNotif(v => !v), markAsRead()}}>
       <Bell size={22} />
+       {unreadCount > 0 && (
+      <span className="notif-bubble">{unreadCount}</span>
+    )}
     </button>
     {showNotif && (
       <div className="dashboard-notif-list-container notif-dropdown">

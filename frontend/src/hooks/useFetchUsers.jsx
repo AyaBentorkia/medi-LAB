@@ -10,6 +10,7 @@ export const useFetchUsers = (statusChanged=false)=>{
       const [isLoading, setIsLoading] = useState(true);
     
       useEffect(() => {
+        if (!token || !role) return;  
         const fetchUsers = async () => {
           //ajout des données dans le cache
           const cacheKey = 'users_data';
@@ -53,7 +54,7 @@ export const useFetchUsers = (statusChanged=false)=>{
         }
         
         fetchUsers();
-      }, [token]);
+      }, [token, role, statusChanged]);
     
       return {
         users,setUsers,

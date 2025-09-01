@@ -9,6 +9,7 @@ export const useFetchReports = ()=>{
     const [reports, setReports] = useState([]);
 
      useEffect(()=>{
+      if (!token || !role) return;  
             const fetchReports= async()=>{
                 const cacheKey = 'reports_data';
           const cachedData = localStorage.getItem(cacheKey);
@@ -38,7 +39,7 @@ export const useFetchReports = ()=>{
           }
         }
         fetchReports();
-        },[token])
+        },[token,role])
 
         return {
             role,token,
@@ -55,6 +56,7 @@ export const useGetReportByRequestId = (requestId)=>{
     const [reportId, setReportId] = useState({});
 
      useEffect(()=>{
+      if (!token ) return;  
             const fetchReport= async()=>{
            
           try {

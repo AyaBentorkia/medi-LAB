@@ -10,6 +10,7 @@ export const useFetchRequests = ()=>{
     const [statusChanged,setStatusChanged]= useState(false);
 
     useEffect(() => {
+      if (!token || !role) return;  
         const fetchRequests = async () => {
           const cacheKey = 'requests_data';
           const cachedData = localStorage.getItem(cacheKey);
@@ -38,7 +39,7 @@ export const useFetchRequests = ()=>{
           }
         }
         fetchRequests();
-      }, [token]);
+      }, [token,role]);
 
       return {
         token,role,

@@ -42,7 +42,7 @@ class AnalysisTypeService {
      async getAnalysisTypes(query) {
         const { title} = query;
         let filtre={};
-        if (title) filtre.title = { [Op.like]: `%${title}%` };
+        if (title && title!=="undefined") filtre.title = { [Op.like]: `%${title}%` };
         const total = await AnalysisType.count({ where: filtre });
 
         const analysisTypes = await AnalysisType.findAll({

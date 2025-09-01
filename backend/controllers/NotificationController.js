@@ -34,6 +34,41 @@ const getAllNotifications = async (req, res, next) => {
     
   }
 };
+//markAsRead
+const MarkNotifAsRead = async (req, res) => {
+  try {
+    const technicianId = req.user.id;
+    const notifications = await NotificationService.markAsRead(technicianId);
+    return res.status(200).json({
+      success: true,
+      notifications,
+    });
+  } catch (error) {
+    console.log(error)
+         if (error instanceof AppError) {
+        return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ message: 'Server Error' });
+    
+  }
+};
+const getAllNotificationUsers = async (req, res, next) => {
+  try {
+    const TechnicianId=req.user.id;
+    const notifications = await NotificationService.getAllNotificationUsers(TechnicianId);
+    return res.status(200).json({
+      success: true,
+      notifications,
+    });
+  } catch (error) {
+    console.log(error)
+         if (error instanceof AppError) {
+        return res.status(error.statusCode).json({ error: error.message });
+        }
+        return res.status(500).json({ message: 'Server Error' });
+    
+  }
+};
 
 const getNotificationsByUser = async (req, res, next) => {
   try {
@@ -58,4 +93,6 @@ module.exports = {
   createNotification,
   getAllNotifications,
   getNotificationsByUser,
+  MarkNotifAsRead,
+  getAllNotificationUsers,
 };

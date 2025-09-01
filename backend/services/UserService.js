@@ -31,7 +31,7 @@ class UserService {
         let filtre={};
          
         if (status) filtre.status = { [Op.like]: `%${status}%` };
-        if (role) filtre.role = { [Op.like]: `%${role}%` };
+        if (role && role !== "undefined") filtre.role = { [Op.like]: `%${role}%` };
         if (search) {
     filtre[Op.or] = [
       { firstname: { [Op.like]: `%${search}%` } },

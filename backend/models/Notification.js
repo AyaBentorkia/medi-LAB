@@ -13,19 +13,14 @@ const Notification = Sequelize.define('Notification', {
     type: DataTypes.STRING, // URL ou chemin du fichier
     allowNull: false,
   },
-  isRead:{
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  }
-  
+
 }, {
   tableName: 'Notifications',
   timestamps: true,
 });
 
 Notification.associate = models => {
-  Notification.belongsTo(models.AnalysisRequest, { foreignKey: 'AnalysisRequestId' });
-  Notification.belongsTo(models.User, { foreignKey: 'uploadedBy' });
+  Notification.belongsTo(models.User, { foreignKey: 'SecretaryId' });
 };
 return Notification;
 }

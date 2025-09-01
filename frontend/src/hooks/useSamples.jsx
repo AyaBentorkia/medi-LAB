@@ -11,6 +11,7 @@ export const useFetchSamples = () => {
   const [samplesChanged, setSamplesChanged] = useState(false);
 
   useEffect(() => {
+    if (!token || !role) return;  
     const fetchsamples = async () => {
       const cacheKey = "samples_data";
       const cachedData = localStorage.getItem(cacheKey);
@@ -47,7 +48,7 @@ export const useFetchSamples = () => {
       }
     };
     fetchsamples();
-  }, [token,samplesChanged]);
+  }, [token,samplesChanged,role]);
 
   const handleUpdateSample = async (sampleId, updatedData) => {
     try {
@@ -87,6 +88,7 @@ export const fetchOneSample = (sampleId) => {
   const [sample, setSample] = useState({});
   const [error, setError] = useState("");
   useEffect(() => {
+    if (!token || !role) return;  
     const fetchsample = async () => {
       try {
         setIsLoading(true);
@@ -100,7 +102,7 @@ export const fetchOneSample = (sampleId) => {
       }
     };
     fetchsample();
-  }, [token, sampleId]);
+  }, [token, sampleId, role]);
 
   return {
     token,

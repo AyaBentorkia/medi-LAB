@@ -15,6 +15,7 @@ export const useFetchTypes = () => {
   const [typesChanged, setTypesChanged] = useState(false);
 
   useEffect(() => {
+    if (!token || !role) return;  
     const fetchtypes = async () => {
       const cacheKey = "types_data";
       const cachedData = localStorage.getItem(cacheKey);
@@ -51,7 +52,7 @@ export const useFetchTypes = () => {
       }
     };
     fetchtypes();
-  }, [token,typesChanged]);
+  }, [token,typesChanged,role]);
 
   const handleUpdateType = async (typeId, updatedData) => {
     try {
@@ -91,6 +92,7 @@ export const fetchOneType = (typeId) => {
   const [type, setType] = useState({});
   const [error, setError] = useState("");
   useEffect(() => {
+    if (!token || !role) return;  
     const fetchType = async () => {
       try {
         setIsLoading(true);
@@ -104,7 +106,7 @@ export const fetchOneType = (typeId) => {
       }
     };
     fetchType();
-  }, [token, typeId]);
+  }, [token, typeId,role]);
 
   return {
     token,
@@ -116,7 +118,7 @@ export const fetchOneType = (typeId) => {
 };
 
 export const useCreateType = () => {
-  const { token, role } = useContext(LoginContext);
+  const { token } = useContext(LoginContext);
   // States
   const [fields, dispatchFields] = useReducer(fieldsReducer, {
     title: { value: "", isValid: null, error: null },

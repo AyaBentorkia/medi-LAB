@@ -98,13 +98,11 @@ class AnalysisRequestService {
     }
        // méthode pour récupérer toutes les demandes d'analyse
     async getAllAnalysisRequests(query) {
-            const { page, limit, status} = query;
-                    //      const pageQ = parseInt(page) || 1; // Page actuelle
-                    // const limitQ = parseInt(limit) || 5;
-                    // const skip = (pageQ - 1) * limitQ;
+            const {  status} = query;
+        
                     let filtre={};
                     
-                    if (status) filtre.status = { [Op.like]: `%${status}%` };
+                    if (status && status !== "undefined") filtre.status = { [Op.like]: `%${status}%` };
              const total = await AnalysisRequest.count({ where: filtre });
 
   // Liste paginée avec filtre
