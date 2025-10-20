@@ -106,7 +106,7 @@ const { notifs,
 
       {/* Actions */}
       <div className="dashboard-actions">
-        <button className="dashboard-btn-primary">
+        <button className="submit-add-result-btn btn-add-result">
           <PlusCircle size={18} /> Nouvelle analyse
         </button>
         <button className="dashboard-btn-outline">

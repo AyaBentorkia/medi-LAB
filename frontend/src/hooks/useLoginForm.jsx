@@ -6,7 +6,7 @@ import { login } from "../apis/AuthApi";
 
 export const useLoginForm = ()=>{
      const navigate = useNavigate();
-  // const [role, setRole] = useState(""); // valeur par défaut
+  // const [role, setRole] = useState(""); 
 
   // States
   const [email, dispatchEmail] = useReducer(emailReducer, {

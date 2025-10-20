@@ -249,7 +249,7 @@ const AddResultModal = ({onClose, analysisRequestId, token }) => {
               Annuler
             </button>
             <button type="submit" className="submit-add-result-btn btn-add-result" disabled={isSubmitting}>
-              <span className="icon-add-result">💾</span>
+              <span className="icon-add-result"></span>
               {isSubmitting ? "Enregistrement..." : "Enregistrer les Résultats"}
             </button>
           </div>

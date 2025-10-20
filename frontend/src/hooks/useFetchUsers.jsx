@@ -17,13 +17,13 @@ export const useFetchUsers = (statusChanged=false)=>{
           const cachedData = localStorage.getItem(cacheKey);
           const cacheTimestamp = localStorage.getItem(`${cacheKey}_timestamp`);
           const now = new Date().getTime();
-          //verification
+
           if (cachedData && cacheTimestamp && now - cacheTimestamp < 300000 && statusChanged) {
             setUsers(JSON.parse(cachedData));
             setIsLoading(false);
             return;
           }
-          //fetch les données selon le role
+          
           try {
             setIsLoading(true);
             let response;
@@ -37,14 +37,14 @@ export const useFetchUsers = (statusChanged=false)=>{
             
             setUsers(response?.data?.users);
             
-            // Mettre en cache les données (Solution 5)
+            // Mettre en cache les données 
             localStorage.setItem(cacheKey, JSON.stringify(response?.data?.users));
             localStorage.setItem(`${cacheKey}_timestamp`, now.toString());
             
           } catch (error) {
             console.error("Error fetching users:", error);
             
-            //en cas d erreur, utiliser les données en cache
+            //en cas d erreur
             if (cachedData) {
               setUsers(JSON.parse(cachedData));
             }

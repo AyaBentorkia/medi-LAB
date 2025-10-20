@@ -210,7 +210,7 @@ const AddUserModal = ({onClose,token}) => {
             disabled={!formIsValid}
             onClick={onSubmit}
                 type="submit" >
-            💾 Enregistrer
+            Enregistrer
           </button>
         </div>
       </div>

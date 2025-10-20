@@ -131,7 +131,7 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
             className="submit-add-result-btn btn-add-result"
             onClick={() => onSave(formData)}
           >
-            💾 Enregistrer
+             Enregistrer
           </button>
         </div>
       </div>

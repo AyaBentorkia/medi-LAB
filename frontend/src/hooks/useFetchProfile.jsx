@@ -4,7 +4,7 @@ import LoginContext from '../context/LoginContext';
 import { GetProfile, UpdateProfile, UpdateUserStatus } from '../apis/UsersApi';
   export const useFetchProfile= ()=>{
 
-  const token = localStorage.getItem("token")
+  const {token} = useContext(LoginContext)
   const [userData, setUserData] = useState({});
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);

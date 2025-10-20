@@ -81,7 +81,7 @@ const recentPatients = lastThree.map(user => ({
       </div>
       
       <div className="dashboard-actions">
-        <button className="dashboard-btn-primary">
+        <button className="submit-add-result-btn btn-add-result">
           <PlusCircle size={18} /> Nouvelle demande d'analyse
         </button>
         <button className="dashboard-btn-outline">

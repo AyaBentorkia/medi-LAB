@@ -71,7 +71,7 @@ const EditSampleModal = ({sample,selectedsampleId,onClose}) => {
             className="submit-add-result-btn btn-add-result"
             onClick={() => handleUpdateSample(selectedsampleId,formData)}
           >
-            💾 Enregistrer
+             Enregistrer
           </button>
         </div>
       </div>

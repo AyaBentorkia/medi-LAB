@@ -84,32 +84,15 @@ const recentUsers = lastThree.map(user => ({
       </div>
 
       {/* Actions rapides */}
-      <div className="dashboard-actions" style={{ flexWrap: "wrap" }}>
-        <button className="dashboard-btn-primary" /*onClick={() => navigate('/utilisateurs')}*/>
-          <Users size={18} /> Consulter les utilisateurs
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/utilisateurs/ajouter')}*/>
-          <UserPlus size={18} /> Créer un utilisateur
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/demandes-d-analyse')}*/>
-          <FileText size={18} /> Consulter les demandes d'analyses
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/rapports-d-analyse')}*/>
-          <ListChecks size={18} /> Consulter les rapports d'analyses
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/prelevements/ajouter')}*/>
-          <FlaskConical size={18} /> Créer un type de prélèvement
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/prelevements')}*/>
-          <FlaskConical size={18} /> Liste des prélèvements
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/types/ajouter')}*/>
-          <TestTube2 size={18} /> Créer un type d'analyse
-        </button>
-        <button className="dashboard-btn-outline" /*onClick={() => navigate('/types')}*/>
-          <TestTube2 size={18} /> Liste des types d'analyse
-        </button>
-      </div>
+       {/* Actions */}
+            <div className="dashboard-actions">
+              <button className="submit-add-result-btn btn-add-result">
+                <PlusCircle size={18} /> Nouveau utilisateur
+              </button>
+              <button className="dashboard-btn-outline">
+                <FileText size={18} /> Voir toutes les utilisateurs
+              </button>
+            </div>
 
       {/* Graphique activité */}
       <div className="dashboard-charts-grid">

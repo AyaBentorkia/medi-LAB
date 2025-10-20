@@ -113,7 +113,7 @@ const AddNewTypeModal = ({  onClose }) => {
               disabled={!formIsValid}
               onClick={onSubmit}
                   type="submit" >
-              💾 Enregistrer
+               Enregistrer
             </button>
           </div>
         </div>

@@ -101,7 +101,7 @@ const EditAnalysisTypeModal = ({type,selectedtypeId,onClose}) => {
             className="submit-add-result-btn btn-add-result"
             onClick={() => handleUpdateType(selectedtypeId,formData)}
           >
-            💾 Enregistrer
+             Enregistrer
           </button>
         </div>
       </div>

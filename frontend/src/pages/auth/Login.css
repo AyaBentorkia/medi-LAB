@@ -17,7 +17,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: url(../../assets/labcover2.jpg) no-repeat center center/cover;
+  background: 
+    linear-gradient(
+      to right,
+      rgba(1, 82, 158, 0.9),  /* medical-blue/90 */
+      rgba(1, 82, 158, 0.7),  /* medical-blue/70 */
+      rgba(100, 181, 246, 0.6) /* medical-blue-light/60 */
+    ),
+    url(../../assets/modern-medical-lab.png) no-repeat center center / cover;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -113,7 +120,8 @@ label {
 .login-btn {
   width: 100%;
   padding: 0.8rem;
-  background-color: #2E6F95;
+    background: linear-gradient(135deg, #1e40af, #3b82f6);
+
   border: none;
   color: white;
   font-weight: bold;
