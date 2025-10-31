@@ -72,16 +72,20 @@ const AnalysisReqRow= React.memo(({
                     </button>
                     {role === ROLES.ANALYST ? (
                       
-                      <button className={`${verifyReportSubmitted(request?.id)} `}>
-                        <FilePlus
-                        size={18}
-                          onClick={() => {
-                            onViewRequest(false);
-                            onAddRequest(false);
-                            onAddResult(true);
-                          }}
-                    />
-                      </button>
+                      <button
+  className={`${verifyReportSubmitted(request)}`}
+  disabled={request.status === "Terminé" || request.status==="En cours"}
+  onClick={() => {
+    if (request.status !== "Terminé" || request.status!=="En cours") {
+      onViewRequest(false);
+      onAddRequest(false);
+      onAddResult(true);
+    }
+  }}
+>
+  <FilePlus size={18} />
+</button>
+
                     ) : (
                        null
                     )}
@@ -119,15 +123,20 @@ const {
       hasPrevPage
     } = usePagination(requests, 10,'request');
 
-    //verifier si le rapport est soumis ou non
-    const verifyReportSubmitted = React.useCallback ((requestId)=>{
-      const {reportId}= useGetReportByRequestId(requestId);
-      let classname='btn-icon-add-file';
-      if(reportId){
-        classname= 'disabled-add-file-btn'
-      }
-      return classname;
-    },[])
+   // Vérifie si le rapport est soumis OU si la demande est terminée
+const verifyReportSubmitted = React.useCallback((request) => {
+  const { reportId } = useGetReportByRequestId(request.id);
+
+  let className = "btn-icon-add-file";
+
+  // Si le rapport existe OU si le statut est "Terminé" → on désactive
+  if (request.status === "Terminé" || request.status=== "En cours") {
+    className = "disabled-add-file-btn";
+  }
+
+  return className;
+}, []);
+
       
     // Fonction pour ouvrir la visualisation d'une demande specifique
   const handleViewRequest = React.useCallback((requestId) => {
@@ -261,7 +270,7 @@ const {
                 onAddResult={() => handleAddResult(request.id)}
                 handleStatusChange={handleStatusChange}
                 getStatusBadge={getStatusBadge}
-                verifyReportSubmitted={()=>verifyReportSubmitted(request.id)}
+                verifyReportSubmitted={()=>verifyReportSubmitted(request)}
               />
               ))
             )}

@@ -12,6 +12,8 @@ const AnalysisReportService = require('../services/AnalysisReportService');
 
 const createReport = async (req, res, next) => {
   try {
+        console.log("req user id ::::::",req.user.id)
+
     const report = await reportService.createReport(req.params.id,req.user.id);
     return res.status(201).json({
       success: true,
@@ -133,7 +135,8 @@ const downloadReport = async (req, res, next) => {
       console.log("ici a 2 file path : ",FilePath);
 
       // 3. Upload to cloudinary
-      const result = await cloudinaryUploadReport(FilePath);
+      const result = await cloudinaryUploadReport(path.resolve(FilePath));
+
 
       // 4. Get the user from DB
       const analysisRequest= await AnalysisRequest.findByPk(req.params.id,

@@ -90,7 +90,7 @@ const Login = () => {
 
               <div className="login-footer">
                 <p>
-                  Vous n'avez pas de compte ?{" "}
+                  Vous avez oublié votre mot de passe  ?{" "}
                   <NavLink to="/register">S'inscrire</NavLink>
                 </p>
               </div>

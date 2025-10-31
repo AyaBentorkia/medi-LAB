@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
 import "./AddResultModal.css"
+import { CreateReport } from "../../apis/AnalysisReportApi";
 
 const AddResultModal = ({onClose, analysisRequestId, token }) => {
     const [results, setResults] = useState([{ resultValue: "", comment: "" },]);
@@ -50,12 +51,21 @@ const AddResultModal = ({onClose, analysisRequestId, token }) => {
             timeout: 5000,
           }
       );
+      console.log("object")
       if(response.status!== 200){
         setError(response.data.error || "Erreur lors de la création des résultats");
         return;
       }
       console.log("Résultats créés avec succès :", response.data);
+      const responseReport= await CreateReport(token,analysisReqId);
+            console.log("Report response :", responseReport);
+      if(responseReport.status!== 200){
+        setError(responseReport.data.error || "Erreur lors de la création de rapport");
+        console.log("erreur rapport cherché ici : ",responseReport.data.error)
+        return;
+      }
         }
+        
         catch (error) {
           setError(error.message || "Erreur lors de la création des résultats")
         }

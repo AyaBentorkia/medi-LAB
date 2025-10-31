@@ -4,26 +4,27 @@ const fs = require('fs');
 const path = require('path');
 const {AnalysisRequest,AnalysisType,User,AnalysisResult,Sample,AnalysisReport}= require("../models");
 const AppError = require("../utils/AppError");
+const { cloudinaryUploadReport } = require("../utils/cloudinary");
 
 class AnalysisReportService {
 
-  async createReport(requestId, technician) {
-       return new Promise(async (resolve, reject) => {
+ async createReport(requestId, technician) {
+  return new Promise(async (resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50 });
       const fileName = `rapport_${requestId}_${Date.now()}.pdf`;
       const filePath = path.join(__dirname, '../uploads/reports', fileName);
-      
+
       // Créer le dossier s'il n'existe pas
       const dir = path.dirname(filePath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
       }
-      
+
       const writeStream = fs.createWriteStream(filePath);
       doc.pipe(writeStream);
-      
-      // Extraire les données de la demande
+
+      // --- Récupération de la demande et du patient ---
       const analysisRequest = await AnalysisRequest.findByPk(requestId, {
         include: [
           {
@@ -45,42 +46,40 @@ class AnalysisReportService {
       });
 
       if (!analysisRequest) {
-        throw new AppError('Demande d\'analyse introuvable', 404);
+        throw new AppError("Demande d'analyse introuvable", 404);
       }
 
-      // En-tête du document
+      // --- En-tête du PDF ---
       doc.fontSize(20).font('Helvetica-Bold').text('RAPPORT D\'ANALYSES MÉDICALES', { align: 'center' });
       doc.moveDown();
 
-      // --- Infos demande & patient côte à côte ---
-const leftX = 50;
-const rightX = 300;
-let currentY = doc.y;
-      
-      // Informations de la demande
+      const leftX = 50;
+      const rightX = 300;
+      const currentY = doc.y;
+
+      // Infos demande
       doc.fontSize(14).font('Helvetica-Bold').text('Informations de la demande:', leftX, currentY);
-doc.fontSize(12).font('Helvetica')
-   .text(`ID Demande: ${analysisRequest.id}`, leftX, doc.y)
-   .text(`Date de création: ${new Date(analysisRequest.createdAt).toLocaleDateString()}`, leftX, doc.y)
-   .text(`Statut: ${analysisRequest.status}`, leftX, doc.y);
-      
-      // Informations patient
+      doc.fontSize(12).font('Helvetica')
+        .text(`ID Demande: ${analysisRequest.id}`, leftX, doc.y)
+        .text(`Date de création: ${new Date(analysisRequest.createdAt).toLocaleDateString()}`, leftX, doc.y)
+        .text(`Statut: ${analysisRequest.status}`, leftX, doc.y);
+
+      // Infos patient
       if (analysisRequest.patient) {
         doc.fontSize(14).font('Helvetica-Bold').text('Informations patient:', rightX, currentY);
-doc.fontSize(12).font('Helvetica')
-   .text(`Nom: ${analysisRequest.patient.lastname}`, rightX, doc.y)
-   .text(`Prénom: ${analysisRequest.patient.firstname}`, rightX, doc.y)
-   .text(`CIN: ${analysisRequest.patient.CIN}`, rightX, doc.y)
-   .text(`Date de naissance: ${new Date(analysisRequest.patient.birth_date).toLocaleDateString()}`, rightX, doc.y);
-
+        doc.fontSize(12).font('Helvetica')
+          .text(`Nom: ${analysisRequest.patient.lastname}`, rightX, doc.y)
+          .text(`Prénom: ${analysisRequest.patient.firstname}`, rightX, doc.y)
+          .text(`CIN: ${analysisRequest.patient.CIN}`, rightX, doc.y)
+          .text(`Date de naissance: ${new Date(analysisRequest.patient.birth_date).toLocaleDateString()}`, rightX, doc.y);
       }
-      doc.moveDown(2);
-      // Titre section résultats
-      doc.fontSize(14).font('Helvetica-Bold').text('Résultats des analyses:',leftX);
-doc.moveDown(1);
 
-      // Extraire les résultats des analyses
-      const results = await AnalysisResult.findAll({
+      doc.moveDown(2);
+      doc.fontSize(14).font('Helvetica-Bold').text('Résultats des analyses:', leftX);
+      doc.moveDown(1);
+
+      // --- Récupération des résultats ---
+      const allResults = await AnalysisResult.findAll({
         where: { AnalysisRequestId: requestId },
         include: [
           {
@@ -88,106 +87,112 @@ doc.moveDown(1);
             as: 'analysisType',
             attributes: ['id', 'title', 'StandardValue', 'unite']
           }
-        ]
+        ],
+        order: [['updatedAt', 'DESC']] // plus récents d’abord
       });
 
-      // Configuration du tableau
-      const tableTop = doc.y + 5;  // << petit offset pour éviter chevauchement
-const colX = {
-  analysis: 50,
-  value: 220,
-  standard: 320,
-  comment: 440,
-};
-const colWidths = {
-  analysis: 150,
-  value: 80,
-  standard: 120,
-  comment: 120,
-};
+      // --- Filtrer pour ne garder que le plus récent par type d’analyse ---
+      const latestResults = [];
+      const seenTypes = new Set();
 
-      
-      // En-tête du tableau
-    doc.font('Helvetica-Bold');
-doc.text('Analyse', colX.analysis, tableTop, { width: colWidths.analysis });
-doc.text('Valeur', colX.value, tableTop, { width: colWidths.value });
-doc.text('Valeur standard', colX.standard, tableTop, { width: colWidths.standard });
-doc.text('Commentaire', colX.comment, tableTop, { width: colWidths.comment });
+      for (const result of allResults) {
+        if (!seenTypes.has(result.AnalysisTypeId)) {
+          latestResults.push(result);
+          seenTypes.add(result.AnalysisTypeId);
+        }
+      }
 
-      
-      // Ligne de séparation de l'en-tête
-doc.moveTo(colX.analysis, tableTop + 18).lineTo(560, tableTop + 18).stroke();      // Remplissage des données du tableau
+      // --- Table de résultats ---
+      const tableTop = doc.y + 5;
+      const colX = { analysis: 50, value: 220, standard: 320, comment: 440 };
+      const colWidths = { analysis: 150, value: 80, standard: 120, comment: 120 };
+
+      // En-tête
+      doc.font('Helvetica-Bold');
+      doc.text('Analyse', colX.analysis, tableTop, { width: colWidths.analysis });
+      doc.text('Valeur', colX.value, tableTop, { width: colWidths.value });
+      doc.text('Valeur standard', colX.standard, tableTop, { width: colWidths.standard });
+      doc.text('Commentaire', colX.comment, tableTop, { width: colWidths.comment });
+      doc.moveTo(colX.analysis, tableTop + 18).lineTo(560, tableTop + 18).stroke();
+
+      // Données
       let yPosition = tableTop + 25;
       doc.font('Helvetica');
-      
-      results.forEach((result, index) => {
-        // Gestion des sauts de page
+
+      latestResults.forEach((result) => {
         if (yPosition > 700) {
           doc.addPage();
           yPosition = 50;
         }
-        
-        // Nom de l'analyse (avec gestion du texte trop long)
+
         const analysisName = result.analysisType.title;
-  const value = result.resultValue;
-  const standardValue = result.analysisType.StandardValue || 'N/A';
-  const comment = result.comment || '-';
+        const value = result.resultValue;
+        const standardValue = result.analysisType.StandardValue || 'N/A';
+        const comment = result.comment || '-';
 
-  
-  // Calcul de la hauteur nécessaire par cellule
-  const analysisHeight = doc.heightOfString(analysisName, { width: colWidths.analysis });
-  const valueHeight = doc.heightOfString(value, { width: colWidths.value });
-  const standardHeight = doc.heightOfString(standardValue, { width: colWidths.standard });
-  const commentHeight = doc.heightOfString(comment, { width: colWidths.comment });
+        const rowHeight = Math.max(
+          doc.heightOfString(analysisName, { width: colWidths.analysis }),
+          doc.heightOfString(value, { width: colWidths.value }),
+          doc.heightOfString(standardValue, { width: colWidths.standard }),
+          doc.heightOfString(comment, { width: colWidths.comment }),
+          20
+        );
 
-  // Prendre la plus grande hauteur pour la ligne
-const rowHeight = Math.max(
-    doc.heightOfString(analysisName, { width: colWidths.analysis }),
-    doc.heightOfString(value, { width: colWidths.value }),
-    doc.heightOfString(standardValue, { width: colWidths.standard }),
-    doc.heightOfString(comment, { width: colWidths.comment }),
-    20
-  );
-  // Affichage des cellules
-   doc.fontSize(12).text(analysisName, colX.analysis, yPosition, { width: colWidths.analysis });
-  doc.fontSize(11).text(value, colX.value, yPosition, { width: colWidths.value });
-  doc.fontSize(11).text(standardValue, colX.standard, yPosition, { width: colWidths.standard });
-  doc.fontSize(11).text(comment, colX.comment, yPosition, { width: colWidths.comment });
+        doc.fontSize(12).text(analysisName, colX.analysis, yPosition, { width: colWidths.analysis });
+        doc.fontSize(11).text(value, colX.value, yPosition, { width: colWidths.value });
+        doc.fontSize(11).text(standardValue, colX.standard, yPosition, { width: colWidths.standard });
+        doc.fontSize(11).text(comment, colX.comment, yPosition, { width: colWidths.comment });
 
-  doc.moveTo(colX.analysis, yPosition + rowHeight).lineTo(560, yPosition + rowHeight).stroke();
-  yPosition += rowHeight + 5;
+        doc.moveTo(colX.analysis, yPosition + rowHeight).lineTo(560, yPosition + rowHeight).stroke();
+        yPosition += rowHeight + 5;
       });
-      
-      // Pied de page
-     doc.fontSize(10);
-doc.text(`Rapport généré le: ${new Date().toLocaleDateString()}`, 50, doc.page.height - 80);
-doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || ''}`, 50, doc.page.height - 65);
-      
+
+      // --- Pied de page ---
+      doc.fontSize(10);
+      doc.text(`Rapport généré le: ${new Date().toLocaleDateString()}`, 50, doc.page.height - 80);
+      // doc.text(`Technicien: ${technician?.firstname || ''} ${technician?.lastname || ''}`, 50, doc.page.height - 65);
+console.log("🟢 Génération du rapport terminée, attente de writeStream...");
+
       doc.end();
-      
-      writeStream.on('finish',  async () => {
+
+      writeStream.on('finish', async () => {
   try {
-    // Sauvegarder dans la table
+    // 🔹 1. Upload sur Cloudinary
+    const cloudinaryResponse = await cloudinaryUploadReport(filePath);
+    console.log("✅ Rapport uploadé sur Cloudinary :", cloudinaryResponse.secure_url);
+      console.log("✅ Événement 'finish' déclenché !");
+
+
+    // 🔹 2. Enregistrer dans ta base de données
     const report = await AnalysisReport.create({
       AnalysisRequestId: requestId,
-      uploadedBy: technician, 
+      uploadedBy: technician,
       fileName,
       filePath,
-      fileUrl: `/uploads/reports/${fileName}`
+      fileUrl: cloudinaryResponse.secure_url, // 🔹 URL Cloudinary au lieu de locale
+      cloudinaryPublicId: cloudinaryResponse.public_id // facultatif mais utile pour suppression
     });
+ console.log("📄 Rapport enregistré dans la base :", report.id);
 
     resolve(report);
   } catch (dbError) {
+        console.error("❌ Erreur lors de l'enregistrement :", dbError);
+
     reject(dbError);
   }
 });
-      
-      writeStream.on('error', reject);
+
+
+writeStream.on('error', (err) => {
+  console.error("❌ Erreur writeStream :", err);
+  reject(err);
+});
     } catch (error) {
       reject(error);
     }
   });
 }
+
  // Récupérer tous les rapports
   async getAllReports(query) {
       const { page, limit} = query;

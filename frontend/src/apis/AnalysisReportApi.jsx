@@ -57,3 +57,10 @@ export const DeleteReport = async (token,reportId) => {
       );
   return res;
 };
+export const CreateReport= async (token,requestId)=>{
+ const res = await axios.post(
+          `http://localhost:5000/LabTechnician/reports/${requestId}`,{},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  return res;
+}

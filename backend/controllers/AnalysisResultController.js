@@ -8,17 +8,18 @@ const AppError = require("../utils/AppError");
 const createMultipleResults = async (req, res) => {
   try {
     const technicianId = req.user.id; // supposé récupéré via middleware auth
-    // const analysisResultData = req.params.id; // tableau des résultats à créer
+    const analysisResultData = req.body; 
 
     const results = await AnalysisResultService.createMultipleResults(
-      // analysisResultData,
+      analysisResultData,
       req.params.id,
       technicianId
     );
-
+    
     return res.status(200).json({ message: 'Résultats créés avec succès', results });
   } catch (error) {
     if (error instanceof AppError) {
+      console.log(error)
       return res.status(error.statusCode).json({ error: error.message });
     }
     console.error(error);

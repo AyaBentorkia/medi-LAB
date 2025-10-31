@@ -8,12 +8,10 @@ cloudinary.config({
 
 
 //CV uploader
-const cloudinaryUploadReport = async (fileToUpload) => {
+const cloudinaryUploadReport = async (filePath) => {
   try {
-    const data = await cloudinary.uploader.upload(fileToUpload, {
-      resource_type: "raw", // obligatoire pour PDF/DOC/DOCX
+   const data =await cloudinary.uploader.upload(filePath, { resource_type: "raw" });
 
-    });
     console.log("result cloud : ",data);
     return data;
   } catch (error) {
