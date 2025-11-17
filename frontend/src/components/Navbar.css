@@ -5,7 +5,7 @@
   left: 0;
   right: 0;
   z-index: 50;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: white;
   backdrop-filter: blur(4px);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   border-bottom: 1px solid #e5e7eb;
@@ -29,9 +29,11 @@
 }
 
 .logo-img {
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 45px;       /* adjust as needed */
+  width: auto;
+  object-fit: contain;
 }
+
 
 .logo-text h1 {
   font-size: 1.25rem;

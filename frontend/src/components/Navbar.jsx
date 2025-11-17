@@ -25,10 +25,9 @@ const Navbar = () => {
         {/* Logo */}
         <div className="logo" onClick={() => navigate("/")}>
           {/* <img src={labLogo} alt="Laboratoire Médical" className="logo-img" /> */}
-          <div className="logo-text">
-            <h1>LabMédical</h1>
-            <p>Excellence & Précision</p>
-          </div>
+          <div className="logo" onClick={() => navigate("/")}>
+          <img src={labLogo} alt="Medi-Lab Logo" className="logo-img" />
+        </div>
         </div>
 
         {/* Desktop Navigation */}

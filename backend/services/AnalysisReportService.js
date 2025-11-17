@@ -61,8 +61,8 @@ class AnalysisReportService {
       doc.fontSize(14).font('Helvetica-Bold').text('Informations de la demande:', leftX, currentY);
       doc.fontSize(12).font('Helvetica')
         .text(`ID Demande: ${analysisRequest.id}`, leftX, doc.y)
-        .text(`Date de création: ${new Date(analysisRequest.createdAt).toLocaleDateString()}`, leftX, doc.y)
-        .text(`Statut: ${analysisRequest.status}`, leftX, doc.y);
+        .text(`Date de création: ${new Date(analysisRequest.createdAt).toLocaleDateString()}`, leftX, doc.y);
+        //.text(`Statut: ${analysisRequest.status}`, leftX, doc.y);
 
       // Infos patient
       if (analysisRequest.patient) {

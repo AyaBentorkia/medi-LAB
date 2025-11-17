@@ -2,6 +2,15 @@ import React, { useEffect, useState } from "react"
 import axios from "axios"
 import "./AddResultModal.css"
 import { CreateReport } from "../../apis/AnalysisReportApi";
+import {
+  X,
+  User,
+  Beaker,
+  FlaskConical,
+  Clipboard,
+  FileText,
+  MessageSquare,
+} from "lucide-react";
 
 const AddResultModal = ({onClose, analysisRequestId, token }) => {
     const [results, setResults] = useState([{ resultValue: "", comment: "" },]);
@@ -119,148 +128,156 @@ const AddResultModal = ({onClose, analysisRequestId, token }) => {
 
 
   return (
-    <div className="modal-add-result-overlay analysis-request-modal">
-      <div className="modal-add-result-content">
+    <div className="modal-add-req-overlay">
+      <div className="modal-add-req-content analysis-request-modal">
         {/* Header */}
-        <div className="modal-add-result-header">
-          <h2 className="modal-add-result-title">
-            <span className="icon-add-result">🧪</span>
-            Saisie des Résultats d'Analyse
+        <div className="modal-add-req-header">
+          <h2 className="modal-add-req-title">
+            <FlaskConical size={20} className="icon-add-req" />
+            Saisie des résultats d’analyse
           </h2>
-          <button type="button" className="modal-add-result-close-btn" onClick={onClose}>
-            ✕
+          <button className="modal-add-req-close-btn" onClick={onClose}>
+            <X size={20} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="modal-add-result-body">
-            {/* Alerts */}
+          <div className="modal-add-req-body">
             {error && <div className="alert error">{error}</div>}
             {success && <div className="alert success">{success}</div>}
 
-            {/* Patient Info Section */}
-            <div className="form-add-result-section patient-info-add-result">
-              <h3 className="section-add-result-title">
-                <span className="icon-add-result">👤</span>
-                Informations Patient
+            {/* Section Patient */}
+            <div className="form-add-req-section patient-add-req-info">
+              <h3 className="section-add-req-title">
+                <User size={16} className="icon-add-req" />
+                Informations du patient
               </h3>
-              <div className="form-add-result-group">
+              <div className="form-add-req-group">
                 <label>
-                  <span className="icon-add-result">📋</span>
-                  Demande N° {analysisRequest?.id}
+                  <FileText size={14} className="icon-add-req" />
+                  N° Demande
                 </label>
                 <input
                   type="text"
-                    value={`${analysisRequest?.patient?.firstname || ""} ${analysisRequest?.patient?.lastname || ""}`}
+                  value={analysisRequest?.id || ""}
                   disabled
-                  style={{ backgroundColor: "#f3f4f6", color: "#6b7280" }}
+                />
+              </div>
+              <div className="form-add-req-group">
+                <label>
+                  <User size={14} className="icon-add-req" />
+                  Nom du patient
+                </label>
+                <input
+                  type="text"
+                  value={`${analysisRequest?.patient?.firstname || ""} ${
+                    analysisRequest?.patient?.lastname || ""
+                  }`}
+                  disabled
                 />
               </div>
             </div>
 
-            {/* Results Section */}
-            <div className="form-add-result-section analyses-add-result-section">
-              <h3 className="section-add-result-title">
-                <span className="icon-add-result">🔬</span>
-                Résultats d'Analyse ({analysisRequest?.analysisTypes?.length} analyses)
+            {/* Section Résultats */}
+            <div className="form-add-req-section analyses-add-req-section">
+              <h3 className="section-add-req-title">
+                <Beaker size={16} className="icon-add-req" />
+                Résultats d’analyse
               </h3>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                {analysisRequest?.analysisTypes?.map((analysisType, index) => (
-                  <div
-                    key={analysisType?.id}
-                    style={{
-                      background: "white",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "8px",
-                      padding: "16px",
-                      borderLeft: "4px solid #f59e0b",
-                    }}
-                  >
-                    <h4
-                      style={{
-                        margin: "0 0 12px 0",
-                        fontSize: "15px",
-                        fontWeight: "600",
-                        color: "#374151",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <span className="icon-add-result">⚗️</span>
-                      {analysisType?.title}
-                      {analysisType?.unite && (
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            color: "#6b7280",
-                            background: "#f3f4f6",
-                            padding: "2px 8px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          {analysisType?.unite}
-                        </span>
-                      )}
-                    </h4>
-
-                    {analysisType?.StandardValue && (
-                      <p
+              {analysisRequest?.analysisTypes?.map((analysis, index) => (
+                <div key={index} className="form-add-req-section samples-add-req-section">
+                  <h4 className="section-add-req-title">
+                    <FlaskConical size={14} className="icon-add-req" />
+                    {analysis.title}{" "}
+                    {analysis.unite && (
+                      <span
                         style={{
-                          margin: "0 0 12px 0",
-                          fontSize: "13px",
-                          color: "#6b7280",
-                          fontStyle: "italic",
+                          fontSize: "12px",
+                          background: "#f3f4f6",
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          color: "#374151",
                         }}
                       >
-                        Valeurs normales: {analysisType?.StandardValue}
-                      </p>
+                        {analysis.unite}
+                      </span>
                     )}
+                  </h4>
+                  {analysis.StandardValue && (
+                    <p
+                      style={{
+                        fontSize: "13px",
+                        color: "#6b7280",
+                        marginBottom: "8px",
+                        fontStyle: "italic",
+                      }}
+                    >
+                      Valeurs normales : {analysis.StandardValue}
+                    </p>
+                  )}
 
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "12px" }}>
-                      <div className="form-add-result-group">
-                        <label>
-                          <span className="icon-add-result">📊</span>
-                          Valeur du résultat *
-                        </label>
-                        <input
-                          type="text"
-                          value={results[index]?.resultValue || ""}
-                          onChange={(e) => handleResultChange(index, "resultValue", e.target.value)}
-                          placeholder="Ex: 7, 140/90, Positif..."
-                          required
-                        />
-                      </div>
-
-                      <div className="form-add-result-group">
-                        <label>
-                          <span className="icon-add-result">💬</span>
-                          Commentaire (optionnel)
-                        </label>
-                        <input
-                          type="text"
-                          value={results[index]?.comment || ""}
-                          onChange={(e) => handleResultChange(index, "comment", e.target.value)}
-                          placeholder="Ex: Légèrement au-dessus de la normale..."
-                        />
-                      </div>
-                    </div>
+                  <div className="form-add-req-group">
+                    <label>
+                      <Beaker size={14} className="icon-add-req" />
+                      Valeur du résultat *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ex : 7, 140/90, Positif..."
+                      value={results[index]?.resultValue || ""}
+                      onChange={(e) =>
+                        handleResultChange(index, "resultValue", e.target.value)
+                      }
+                      required
+                    />
                   </div>
-                ))}
-              </div>
+
+                  <div className="form-add-req-group">
+                    <label>
+                      <MessageSquare size={14} className="icon-add-req" />
+                      Commentaire (optionnel)
+                    </label>
+                    <textarea
+                      placeholder="Observations ou remarques..."
+                      value={results[index]?.comment || ""}
+                      onChange={(e) =>
+                        handleResultChange(index, "comment", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
 
+            {/* Notes supplémentaires */}
+            <div className="form-add-req-section notes-add-req-section">
+              <h3 className="section-add-req-title">
+                <Clipboard size={16} className="icon-add-req" />
+                Notes internes
+              </h3>
+              <p style={{ fontSize: "14px", color: "#6b7280" }}>
+                Vérifiez soigneusement toutes les valeurs avant validation.
+              </p>
+            </div>
           </div>
 
           {/* Footer */}
-          <div className="modal-add-result-footer">
-            <button type="button" className="cancel-add-result-btn btn-add-result" onClick={onClose} disabled={isSubmitting}>
+          <div className="modal-add-req-footer">
+            <button
+              type="button"
+              className="btn-add-req cancel-add-req-btn"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Annuler
             </button>
-            <button type="submit" className="submit-add-result-btn btn-add-result" disabled={isSubmitting}>
-              <span className="icon-add-result"></span>
-              {isSubmitting ? "Enregistrement..." : "Enregistrer les Résultats"}
+            <button
+              type="submit"
+              className="btn-add-req submit-add-req-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Enregistrement..." : "Enregistrer les résultats"}
             </button>
           </div>
         </form>
